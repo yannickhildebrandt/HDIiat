@@ -10,7 +10,6 @@ HDI_LIGHT_GRAY = "#f5f5f5"
 HDI_RED = "#d9534f"
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli ---
-# (Unverändert)
 STIMULI = {
     'canonical': ['Trainings durchführen', 'Vorträge erstellen', 'Folien bearbeiten', 'Wissen teilen', 'Präsentation', 'Grafiken präsentieren', 'Verkaufspräsentation', 'Folien erstellen'],
     'non_affordance': ['Datenverschlüsselung', 'Spiele herunterladen', 'Instant Messaging', 'Im Internet surfen', 'Dateien wiederherstellen', 'Musik streamen', 'Online bezahlen', 'Virenscan'],
@@ -34,7 +33,6 @@ IAT_BLOCKS = [
 ]
 
 # --- 3. Funktionen zur Steuerung des Tests ---
-# (Unverändert)
 def initialize_state():
     if 'test_phase' not in st.session_state:
         st.session_state.test_phase = 'start'
@@ -84,47 +82,23 @@ def record_response(key_pressed):
         st.session_state.show_feedback = True
 
 # --- 4. UI-Komponenten und Styling ---
-
 def load_css():
-    """Lädt CSS für Animationen, Cards und ein modernes UI."""
     st.markdown(f"""
     <style>
         @keyframes fadeIn {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
         @keyframes slideInUp {{ from {{ transform: translateY(20px); opacity: 0; }} to {{ transform: translateY(0); opacity: 1; }} }}
-        @keyframes shake {{
-            0%, 100% {{ transform: translateX(0); }}
-            10%, 30%, 50%, 70%, 90% {{ transform: translateX(-5px); }}
-            20%, 40%, 60%, 80% {{ transform: translateX(5px); }}
-        }}
+        @keyframes shake {{ 0%, 100% {{ transform: translateX(0); }} 10%, 30%, 50%, 70%, 90% {{ transform: translateX(-5px); }} 20%, 40%, 60%, 80% {{ transform: translateX(5px); }} }}
         .fade-in {{ animation: fadeIn 0.5s ease-in-out; }}
         .slide-in-up {{ animation: slideInUp 0.5s ease-out; }}
         .stApp {{ background-color: {HDI_LIGHT_GRAY}; }}
         .stApp, .stMarkdown, h1, h2, h3, h4, h5, h6 {{ color: {HDI_DARK_GRAY}; }}
         h1, h2, h3 {{ animation: fadeIn 0.5s ease-in, slideInUp 0.5s ease-out; }}
-        .card {{
-            background-color: white; padding: 2rem; border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-top: 1.5rem;
-            animation: fadeIn 0.5s ease-in-out;
-        }}
+        .card {{ background-color: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-top: 1.5rem; animation: fadeIn 0.5s ease-in-out; }}
         .card p {{ margin-bottom: 0; }}
-        .stButton>button {{
-            background-image: linear-gradient(to right, {HDI_GREEN} 0%, #009a6e 51%, {HDI_GREEN} 100%);
-            color: white; border-radius: 10px; padding: 15px 30px; font-size: 1.2rem;
-            font-weight: bold; border: none; transition: 0.5s; background-size: 200% auto;
-            box-shadow: 0 4px 10px rgba(0, 122, 82, 0.3);
-        }}
-        .stButton>button:hover {{
-            background-position: right center; color: white; transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 122, 82, 0.4);
-        }}
-        .stButton>button[kind="secondary"] {{
-            height: 180px; white-space: pre-wrap; font-size: 1.3rem; background: white;
-            color: {HDI_DARK_GRAY}; border: 2px solid #ddd; box-shadow: none;
-        }}
-        .stButton>button[kind="secondary"]:hover {{
-            border-color: {HDI_GREEN}; background-color: #f9f9f9; transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }}
+        .stButton>button {{ background-image: linear-gradient(to right, {HDI_GREEN} 0%, #009a6e 51%, {HDI_GREEN} 100%); color: white; border-radius: 10px; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border: none; transition: 0.5s; background-size: 200% auto; box-shadow: 0 4px 10px rgba(0, 122, 82, 0.3); }}
+        .stButton>button:hover {{ background-position: right center; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0, 122, 82, 0.4); }}
+        .stButton>button[kind="secondary"] {{ height: 180px; white-space: pre-wrap; font-size: 1.3rem; background: white; color: {HDI_DARK_GRAY}; border: 2px solid #ddd; box-shadow: none; }}
+        .stButton>button[kind="secondary"]:hover {{ border-color: {HDI_GREEN}; background-color: #f9f9f9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }}
         .stimulus-container.incorrect .stimulus-text {{ color: {HDI_RED}; animation: shake 0.5s ease-in-out; }}
         .stimulus-text {{ text-align: center; font-size: 3rem; font-weight: bold; padding: 60px 0; color: {HDI_GREEN}; animation: fadeIn 0.3s ease; }}
         .feedback-x {{ color: {HDI_RED}; font-size: 2.5rem; text-align: center; font-weight: bold; height: 40px; }}
@@ -133,8 +107,6 @@ def load_css():
         .iat-result-bar.positive {{ background-color: {HDI_GREEN}; left: 50%; }}
         .iat-result-bar.negative {{ background-color: {HDI_RED}; right: 50%; }}
         .iat-result-center-line {{ position: absolute; left: 50%; top: 0; bottom: 0; border-left: 2px dashed #adb5bd; }}
-        
-        /* NEU: CSS für nachgebaute Metriken */
         .metrics-container {{ display: flex; justify-content: space-between; text-align: center; margin: 1.5rem 0; }}
         .metric-col {{ flex: 1; padding: 0 10px; }}
         .metric-label {{ font-size: 0.9rem; color: #555; }}
@@ -145,11 +117,19 @@ def load_css():
 def show_footer():
     st.write("")
     st.markdown("---")
-    st.markdown(
-        """<div style='text-align: center; color: #888; font-size: 0.9rem;'>
+    st.markdown("""<div style='text-align: center; color: #888; font-size: 0.9rem;'>
         Ein Tool von <b>Eggers & Partner Consulting</b><br>
         entwickelt von <i>Dr. Yannick Hildebrandt</i>
         </div>""", unsafe_allow_html=True)
+
+def jump_to_end_for_debug():
+    st.session_state.results = [
+        {'block': 4, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 650 + random.randint(-50, 50)},
+        {'block': 4, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 750 + random.randint(-50, 50)},
+        {'block': 7, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 950 + random.randint(-50, 50)},
+        {'block': 7, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 1050 + random.randint(-50, 50)},
+    ]
+    st.session_state.test_phase = 'end'
 
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
@@ -173,6 +153,8 @@ def show_start_page():
         st.session_state.test_phase = 'break'
         prepare_block(0)
         st.rerun()
+    with st.expander("⚙️ Debug-Optionen"):
+        st.button("Direkt zur Ergebnisseite springen (Layout-Test)", on_click=jump_to_end_for_debug, use_container_width=True, type="secondary")
     show_footer()
 
 def show_break_screen():
@@ -183,7 +165,7 @@ def show_break_screen():
     st.progress(progress_percent, text=f"{int(progress_percent*100)}% abgeschlossen")
     st.write("")
     countdown_placeholder = st.empty()
-    BREAK_DURATION = 10
+    BREAK_DURATION = 5
     for i in range(BREAK_DURATION, 0, -1):
         countdown_placeholder.markdown(f"<h1 style='text-align: center; font-size: 5rem; color: {HDI_GREEN};'>{i}</h1>", unsafe_allow_html=True)
         time.sleep(1)
@@ -211,12 +193,11 @@ def show_testing_interface():
         time.sleep(0.01)
 
 def get_iat_effect_visualization_html(iat_effect):
-    max_effect_for_scale = 500 
+    max_effect_for_scale = 500
     normalized_effect = max(min(iat_effect, max_effect_for_scale), -max_effect_for_scale)
     bar_width = abs(normalized_effect / max_effect_for_scale) * 50
     bar_class = "positive" if iat_effect >= 0 else "negative"
-    return f"""
-        <div style="font-size: 0.9rem; display: flex; justify-content: space-between; color: #555;">
+    return f"""<div style="font-size: 0.9rem; display: flex; justify-content: space-between; color: #555;">
             <span>Starke Assoziation mit <b>Nutzlos</b></span>
             <span>Starke Assoziation mit <b>Nützlich</b></span>
         </div>
@@ -235,7 +216,6 @@ def calculate_and_show_results():
         if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7): raise ValueError("Nicht genügend Daten.")
         iat_effect = avg_rt_block7 - avg_rt_block4
 
-        # KORREKTUR: Erste Karte als kompletter HTML-Block
         interpretation_html = ""
         if iat_effect > 50:
             interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Positive Tendenz:</b> Sie assoziieren 'PowerPoint-Anwendung' implizit eher mit <b>'Nützlich'</b>.</div>"
@@ -245,29 +225,18 @@ def calculate_and_show_results():
             interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Neutrale Tendenz:</b> Ihre impliziten Assoziationen sind weitgehend ausgeglichen.</div>"
         
         viz_html = get_iat_effect_visualization_html(iat_effect)
-        
         st.markdown(f"""<div class="card">
             <h4>Ihre implizite Neigung auf einen Blick</h4>
             {interpretation_html}
             {viz_html}
         </div>""", unsafe_allow_html=True)
-
-        # KORREKTUR: Zweite Karte als kompletter HTML-Block
+        
         st.markdown(f"""<div class="card">
             <h4>⏱️ Detailauswertung</h4>
             <div class="metrics-container">
-                <div class="metric-col">
-                    <div class="metric-label">Ø Zeit (PP + Nützlich)</div>
-                    <div class="metric-value">{avg_rt_block4:.0f} ms</div>
-                </div>
-                <div class="metric-col">
-                    <div class="metric-label">Ø Zeit (PP + Nutzlos)</div>
-                    <div class="metric-value">{avg_rt_block7:.0f} ms</div>
-                </div>
-                <div class="metric-col">
-                    <div class="metric-label">IAT-Effekt (Differenz)</div>
-                    <div class="metric-value">{iat_effect:.0f} ms</div>
-                </div>
+                <div class="metric-col"><div class="metric-label">Ø Zeit (PP + Nützlich)</div><div class="metric-value">{avg_rt_block4:.0f} ms</div></div>
+                <div class="metric-col"><div class="metric-label">Ø Zeit (PP + Nutzlos)</div><div class="metric-value">{avg_rt_block7:.0f} ms</div></div>
+                <div class="metric-col"><div class="metric-label">IAT-Effekt (Differenz)</div><div class="metric-value">{iat_effect:.0f} ms</div></div>
             </div>
             <hr>
             <p><b>Wie kommt das Ergebnis zustande?</b><br>
@@ -275,8 +244,6 @@ def calculate_and_show_results():
             <p style="margin-top: 1rem;"><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung.</p>
         </div>""", unsafe_allow_html=True)
         
-        # ENTFERNT: Der Expander für Rohdaten wurde entfernt.
-
     except (KeyError, ZeroDivisionError, ValueError) as e:
         st.error(f"Es konnten keine ausreichenden Daten gesammelt werden. Bitte versuchen Sie es erneut. Fehler: {e}")
     
@@ -287,7 +254,6 @@ def calculate_and_show_results():
     show_footer()
 
 # --- 5. Hauptlogik der Streamlit App ---
-
 st.set_page_config(layout="centered", page_title="IAT PowerPoint")
 load_css()
 initialize_state()
