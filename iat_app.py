@@ -25,9 +25,7 @@ IAT_BLOCKS = [
     {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
     {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True},
     {'left': ['non_affordance'], 'right': ['canonical'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
-    # KORRIGIERTE ZEILE 28
     {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
-    # KORRIGIERTE ZEILE 29
     {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True}
 ]
 
@@ -139,10 +137,12 @@ elif st.session_state.test_phase == 'testing':
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
+        # KORRIGIERT: Der Key wird mit dem Trial-Index einzigartig gemacht
         if shortcut_button(label="E", shortcut='e', use_container_width=True, key=f'button_e_{st.session_state.current_trial}'):
             record_response('e')
             st.rerun()
     with col_btn2:
+        # KORRIGIERT: Der Key wird mit dem Trial-Index einzigartig gemacht
         if shortcut_button(label="I", shortcut='i', use_container_width=True, key=f'button_i_{st.session_state.current_trial}'):
             record_response('i')
             st.rerun()
