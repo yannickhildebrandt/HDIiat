@@ -85,7 +85,7 @@ def record_response(key_pressed):
     else:
         st.session_state.show_feedback = True
 
-# --- 4. UI-Komponenten und Styling (Texte angepasst) ---
+# --- 4. UI-Komponenten und Styling (Unverändert) ---
 def load_css():
     st.markdown(f"""
     <style>
@@ -115,7 +115,6 @@ def load_css():
         .metric-col {{ flex: 1; padding: 0 10px; }}
         .metric-label {{ font-size: 0.9rem; color: #555; }}
         .metric-value {{ font-size: 1.8rem; font-weight: bold; color: {HDI_DARK_GRAY}; }}
-        /* NEU: CSS Regel zur Behebung des visuellen Bugs */
         .stAlert {{ margin-top: 1.5rem; }}
     </style>
     """, unsafe_allow_html=True)
@@ -139,11 +138,9 @@ def jump_to_end_for_debug():
 
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
-    # GEÄNDERT: Abstand nach unten hinzugefügt, um den Bug zu beheben
     st.markdown("<h2 style='text-align:center; color: #555; margin-bottom: 2rem;'>Digitale Kognition: Daten als Rohstoff vs. Beleg</h2>", unsafe_allow_html=True)
     st.info("**Willkommen!** Finden Sie Ihre unbewusste Grundhaltung gegenüber Daten heraus.", icon="💡")
     
-    # GEÄNDERT: Icon wieder hinzugefügt
     st.markdown("""<div class="card">
         <h4>🧠 Worum geht es hier?</h4>
         <p>Dieser Test misst die unbewusste Grundhaltung gegenüber Daten. Im Versicherungsalltag sind Daten oft mit Dokumentationspflicht und Nachweisbarkeit verbunden ("Ist das revisionssicher?"). Ein digitales Mindset sieht in denselben Daten jedoch den Treibstoff für KI-Modelle, die zukünftige Risiken prognostizieren und neue Produkte ermöglichen. Der "Aha-Moment" entsteht, wenn Sie erkennen, ob Sie Daten implizit als administrative Last (Vergangenheit) oder als strategischen Rohstoff (Zukunft) wahrnehmen.</p>
@@ -219,7 +216,6 @@ def get_iat_effect_visualization_html(iat_effect):
     bar_width = abs(normalized_effect / max_effect_for_scale) * 50
     bar_class = "positive" if iat_effect >= 0 else "negative"
     
-    # GEÄNDERT: Beschriftungen für eine wertfreie Darstellung angepasst
     return f"""<div style="font-size: 0.9rem; display: flex; justify-content: space-between; color: #555;">
             <span>Fokus auf <b>Qualität & Beleg</b></span>
             <span>Fokus auf <b>Potenzial & Zukunft</b></span>
@@ -242,7 +238,6 @@ def calculate_and_show_results():
 
         iat_effect = avg_rt_block7 - avg_rt_block4
         
-        # GEÄNDERT: Vollständig neue, wertfreie und konstruktive Interpretationen
         interpretation_html = ""
         if iat_effect > 50:
             interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Potenzial-fokussiertes Mindset:</b> Sie assoziieren 'Daten als Rohstoff' implizit stärker mit <b>'Zukunft'</b>. Dies deutet auf eine Denkweise hin, die in Daten vor allem das Potenzial für Neues und Zukünftiges sieht – eine wichtige Grundlage für Innovation und strategische Entwicklung.</div>"
@@ -259,6 +254,7 @@ def calculate_and_show_results():
             {viz_html}
         </div>""", unsafe_allow_html=True)
         
+        # KORRIGIERT: Der fehlerhafte Kommentar wurde aus dem f-string entfernt
         st.markdown(f"""<div class="card">
             <h4>⏱️ Detailauswertung</h4>
             <div class="metrics-container">
@@ -267,7 +263,6 @@ def calculate_and_show_results():
                 <div class="metric-col"><div class="metric-label">IAT-Effekt (Differenz)</div><div class="metric-value">{iat_effect:.0f} ms</div></div>
             </div>
             <hr>
-            {/* GEÄNDERT: Erklärung wertfreier formuliert */}
             <p><b>Wie kommt das Ergebnis zustande?</b><br>
             Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block, der "Daten als Rohstoff" mit "Vergangenheit" kombiniert, mehr Zeit zur Zuordnung benötigt haben. Ihr Gehirn verarbeitet schneller, was es als zusammengehörig empfindet. Dies deutet auf eine stärkere unbewusste Verbindung zwischen "Rohstoff" und "Zukunft" hin.</p>
             <p style="margin-top: 1rem;"><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen. Es ist keine Bewertung Ihrer Person oder Ihrer fachlichen Kompetenz, sondern ein Impuls zur Selbstreflexion.</p>
