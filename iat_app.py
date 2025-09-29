@@ -3,7 +3,14 @@ import random
 import time
 import pandas as pd
 
-# --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
+# --- Globale Konfiguration für das UI-Design ---
+HDI_GREEN = "#007a52"
+HDI_DARK_GRAY = "#333333"
+HDI_LIGHT_GRAY = "#f5f5f5"
+HDI_RED = "#d9534f"
+
+# --- 1. Konfiguration des Tests: Kategorien und Stimuli ---
+# (Unverändert)
 STIMULI = {
     'canonical': ['Trainings durchführen', 'Vorträge erstellen', 'Folien bearbeiten', 'Wissen teilen', 'Präsentation', 'Grafiken präsentieren', 'Verkaufspräsentation', 'Folien erstellen'],
     'non_affordance': ['Datenverschlüsselung', 'Spiele herunterladen', 'Instant Messaging', 'Im Internet surfen', 'Dateien wiederherstellen', 'Musik streamen', 'Online bezahlen', 'Virenscan'],
@@ -16,19 +23,18 @@ CATEGORIES = {
     'useful': 'Nützlich',
     'useless': 'Nutzlos'
 }
-
-# --- 2. Definition der 7 Testblöcke ---
 IAT_BLOCKS = [
-    {'left': ['canonical'], 'right': ['non_affordance'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
-    {'left': ['useful'], 'right': ['useless'], 'stimuli': ['useful', 'useless'], 'trials': 20, 'is_practice': True},
-    {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
-    {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True},
-    {'left': ['non_affordance'], 'right': ['canonical'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
-    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
-    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True}
+    {'left': ['canonical'], 'right': ['non_affordance'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Anwendung'},
+    {'left': ['useful'], 'right': ['useless'], 'stimuli': ['useful', 'useless'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Bewertung'},
+    {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 1 (Übung)'},
+    {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True, 'name': 'Kombination 1 (Test)'},
+    {'left': ['non_affordance'], 'right': ['canonical'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True, 'name': 'Umgewöhnung: Anwendung'},
+    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 2 (Übung)'},
+    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True, 'name': 'Kombination 2 (Test)'}
 ]
 
 # --- 3. Funktionen zur Steuerung des Tests ---
+# (Unverändert)
 def initialize_state():
     if 'test_phase' not in st.session_state:
         st.session_state.test_phase = 'start'
@@ -53,28 +59,21 @@ def prepare_block(block_index):
     st.session_state.current_trial = 0
 
 def record_response(key_pressed):
-    if st.session_state.start_time == 0:
-        return
-
+    if st.session_state.start_time == 0: return
     reaction_time = (time.time() - st.session_state.start_time) * 1000
     block_config = IAT_BLOCKS[st.session_state.current_block]
     current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
-    
     is_correct = (key_pressed == 'e' and current_stimulus['category'] in block_config['left']) or \
                  (key_pressed == 'i' and current_stimulus['category'] in block_config['right'])
-    
     if not st.session_state.show_feedback:
         st.session_state.results.append({
             'block': st.session_state.current_block + 1, 'is_critical': block_config.get('is_critical', False),
             'stimulus': current_stimulus['text'], 'correct': is_correct, 'rt': reaction_time
         })
-    
     st.session_state.start_time = 0
-    
     if is_correct:
         st.session_state.show_feedback = False
         st.session_state.current_trial += 1
-        
         if st.session_state.current_trial >= len(st.session_state.stimuli_list):
             st.session_state.current_block += 1
             if st.session_state.current_block >= len(IAT_BLOCKS):
@@ -84,72 +83,198 @@ def record_response(key_pressed):
     else:
         st.session_state.show_feedback = True
 
+# --- 4. UI-Komponenten und Styling (STABILERE VERSION) ---
+
+def load_css():
+    """Lädt vereinfachtes, stabiles CSS für ein sauberes UI."""
+    st.markdown(f"""
+    <style>
+        /* --- GLOBALE STYLES --- */
+        .stApp {{ background-color: {HDI_LIGHT_GRAY}; }}
+        .stApp, .stMarkdown, h1, h2, h3, h4, h5, h6 {{ color: {HDI_DARK_GRAY}; }}
+
+        /* --- BUTTON-STYLES --- */
+        .stButton>button {{
+            background-color: {HDI_GREEN};
+            color: white;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            transition: background-color 0.3s ease;
+        }}
+        .stButton>button:hover {{
+            background-color: #005a41; /* Dunkleres Grün für Hover */
+            color: white;
+        }}
+        
+        /* IAT-Test Buttons (Typ "secondary") */
+        .stButton>button[kind="secondary"] {{
+            height: 150px;
+            white-space: pre-wrap;
+            font-size: 1.2rem;
+            background-color: white;
+            color: {HDI_DARK_GRAY};
+            border: 2px solid #ddd;
+        }}
+        .stButton>button[kind="secondary"]:hover {{
+            border-color: {HDI_GREEN};
+            background-color: #f9f9f9;
+        }}
+        
+        /* --- TEST-INTERFACE --- */
+        .stimulus-text {{
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: bold;
+            padding: 50px 0;
+            color: {HDI_GREEN};
+        }}
+        .feedback-x {{
+            color: {HDI_RED};
+            font-size: 4rem;
+            text-align: center;
+            font-weight: bold;
+        }}
+    </style>
+    """, unsafe_allow_html=True)
+
+def show_start_page():
+    st.title("Impliziter Assoziationstest (IAT)")
+    st.subheader("Ihre unbewusste Einstellung zu PowerPoint")
+    st.write("")
+
+    # Verwendet st.container(border=True) für ein robustes Card-Design
+    with st.container(border=True):
+        st.markdown("#### Was ist ein Impliziter Assoziationstest?")
+        st.markdown("""
+        Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.
+        """)
+    
+    with st.container(border=True):
+        st.markdown("#### Anleitung")
+        st.markdown("""
+        1.  **Kategorien beachten:** Links und rechts werden Kategorien angezeigt.
+        2.  **Begriff in der Mitte:** Ein Wort erscheint in der Mitte.
+        3.  **Schnell zuordnen:** Klicken Sie so schnell und genau wie möglich auf den Button der passenden Seite. Bei Fehlern erscheint ein rotes **X** – korrigieren Sie sich, um weiterzumachen.
+        
+        **Ziel ist Geschwindigkeit!** Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.
+        """)
+    
+    st.write("")
+    if st.button("Test starten", use_container_width=True):
+        st.session_state.test_phase = 'break'
+        prepare_block(0)
+        st.rerun()
+
+def show_break_screen():
+    block_config = IAT_BLOCKS[st.session_state.current_block]
+    progress_percent = (st.session_state.current_block) / len(IAT_BLOCKS)
+    
+    st.header(f"Block {st.session_state.current_block + 1} von {len(IAT_BLOCKS)}")
+    st.subheader(f"Thema: {block_config['name']}")
+    st.progress(progress_percent, text=f"{int(progress_percent*100)}% abgeschlossen")
+    
+    with st.spinner("Nächste Runde wird vorbereitet..."):
+        time.sleep(3)
+    
+    st.session_state.test_phase = 'testing'
+    prepare_block(st.session_state.current_block)
+    st.rerun()
+
+def show_testing_interface():
+    block_config = IAT_BLOCKS[st.session_state.current_block]
+    current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
+    left_label = "\noder\n".join([CATEGORIES[cat] for cat in block_config['left']])
+    right_label = "\noder\n".join([CATEGORIES[cat] for cat in block_config['right']])
+
+    st.markdown(f'<div class="stimulus-text">{current_stimulus["text"]}</div>', unsafe_allow_html=True)
+
+    if st.session_state.show_feedback:
+        st.markdown('<p class="feedback-x">X</p>', unsafe_allow_html=True)
+    else:
+        # Platzhalter für konsistentes Layout
+        st.markdown('<p style="color:white; font-size: 4rem;">X</p>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.button(left_label, on_click=record_response, args=('e',), use_container_width=True, key=f'btn_e_{st.session_state.current_trial}', type="secondary")
+    with col2:
+        st.button(right_label, on_click=record_response, args=('i',), use_container_width=True, key=f'btn_i_{st.session_state.current_trial}', type="secondary")
+
+    if st.session_state.start_time == 0:
+        st.session_state.start_time = time.time()
+        time.sleep(0.01)
+
 def calculate_and_show_results():
-    st.title("Testergebnis")
+    st.title("Ihr IAT-Ergebnis")
+    
     df = pd.DataFrame(st.session_state.results)
     critical_trials = df[df['is_critical'] & df['correct']]
     
     try:
         avg_rt_block4 = critical_trials[critical_trials['block'] == 4]['rt'].mean()
         avg_rt_block7 = critical_trials[critical_trials['block'] == 7]['rt'].mean()
+
+        if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7):
+            raise ValueError("Nicht genügend Daten in einem der kritischen Blöcke.")
+        
         iat_effect = avg_rt_block7 - avg_rt_block4
 
-        st.metric(label="Ø Reaktionszeit Block 4 (kongruent)", value=f"{avg_rt_block4:.0f} ms")
-        st.metric(label="Ø Reaktionszeit Block 7 (inkongruent)", value=f"{avg_rt_block7:.0f} ms")
-        st.metric(label="IAT-Effekt (Differenz)", value=f"{iat_effect:.0f} ms")
-        st.info("Ein positiver IAT-Effekt deutet auf eine implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nützlich' hin.")
-        with st.expander("Rohdaten anzeigen"): st.dataframe(df)
-    except (KeyError, ZeroDivisionError, ValueError):
-        st.error("Es konnten keine ausreichenden Daten gesammelt werden, um ein Ergebnis zu berechnen.")
-
-# --- 4. Streamlit App Layout und Logik ---
-
-st.set_page_config(layout="centered")
-initialize_state()
-
-if st.session_state.test_phase == 'start':
-    st.title("IAT-Demonstration: PowerPoint-Wahrnehmung")
-    st.markdown("Ihre Aufgabe: Ordnen Sie die Begriffe, die in der Mitte erscheinen, so schnell wie möglich zu, indem Sie auf den entsprechenden Button klicken.")
-    if st.button("Test starten", use_container_width=True):
-        st.session_state.test_phase = 'break'
-        prepare_block(0)
-        st.rerun()
-
-elif st.session_state.test_phase == 'break':
-    st.header(f"Block {st.session_state.current_block + 1} von {len(IAT_BLOCKS)} beginnt...")
-    prepare_block(st.session_state.current_block)
-    time.sleep(2)
-    st.session_state.test_phase = 'testing'
-    st.rerun()
-
-elif st.session_state.test_phase == 'testing':
-    block_config = IAT_BLOCKS[st.session_state.current_block]
-    current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
-    
-    # NEU: Erstelle die Beschriftungen für die Buttons mit Zeilenumbrüchen
-    left_button_label = "\n/\n".join([CATEGORIES[cat] for cat in block_config['left']])
-    right_button_label = "\n/\n".join([CATEGORIES[cat] for cat in block_config['right']])
-
-    # ENTFERNT: Die alten Markdown-Titel oben werden nicht mehr benötigt.
-    
-    st.markdown(f'<div style="text-align: center; font-size: 32px; font-weight: bold; padding: 50px 0;">{current_stimulus["text"]}</div>', unsafe_allow_html=True)
-    
-    if st.session_state.show_feedback:
-        st.markdown('<p style="color:red; font-size: 40px; text-align: center;">X</p>', unsafe_allow_html=True)
-
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        # NEU: Buttons mit den vollständigen Kategorie-Labels erstellen
-        st.button(left_button_label, on_click=record_response, args=('e',), use_container_width=True, key=f'button_e_{st.session_state.current_trial}')
-    with col_btn2:
-        st.button(right_button_label, on_click=record_response, args=('i',), use_container_width=True, key=f'button_i_{st.session_state.current_trial}')
+        with st.container(border=True):
+            st.subheader("Zusammenfassung Ihres Ergebnisses")
             
-    if st.session_state.start_time == 0:
-        st.session_state.start_time = time.time()
+            # Interpretation mit nativen Streamlit-Komponenten
+            if iat_effect > 50:
+                st.success(f"**Positive Tendenz:** Ihre Ergebnisse deuten auf eine implizite Assoziation zwischen 'PowerPoint-Anwendung' und **'Nützlich'** hin.")
+            elif iat_effect < -50:
+                st.warning(f"**Negative Tendenz:** Ihre Ergebnisse deuten auf eine implizite Assoziation zwischen 'PowerPoint-Anwendung' und **'Nutzlos'** hin.")
+            else:
+                st.info("**Neutrale Tendenz:** Ihre impliziten Assoziationen scheinen ausgeglichen zu sein. Es gibt keine klare Präferenz.")
+        
+        with st.container(border=True):
+            st.subheader("Detailauswertung Ihrer Reaktionszeiten")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric(label="Ø Zeit (PP + Nützlich)", value=f"{avg_rt_block4:.0f} ms")
+            with col2:
+                st.metric(label="Ø Zeit (PP + Nutzlos)", value=f"{avg_rt_block7:.0f} ms")
+            with col3:
+                st.metric(label="IAT-Effekt (Differenz)", value=f"{iat_effect:.0f} ms")
+            
+            st.markdown("""
+            **Wie kommt das Ergebnis zustande?**
+            - Ein **positiver IAT-Effekt** bedeutet, dass Sie im Block "PP + Nutzlos" langsamer waren. Ihr Gehirn brauchte mehr Zeit, um diese "unpassende" Kombination zu verarbeiten.
+            - Ein **negativer Effekt** würde das Gegenteil bedeuten.
+            
+            **Wichtiger Hinweis:** Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung.
+            """)
+        
+        with st.expander("Rohdaten der Messung anzeigen"):
+            st.dataframe(df)
 
-elif st.session_state.test_phase == 'end':
-    calculate_and_show_results()
-    if st.button("Test neu starten", use_container_width=True):
+    except (KeyError, ZeroDivisionError, ValueError) as e:
+        st.error(f"Es konnten keine ausreichenden Daten gesammelt werden. Bitte versuchen Sie es erneut. Fehler: {e}")
+        st.dataframe(df)
+    
+    st.write("")
+    if st.button("Test erneut durchführen", use_container_width=True):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
+
+# --- 5. Hauptlogik der Streamlit App ---
+
+st.set_page_config(layout="centered", page_title="IAT PowerPoint")
+load_css()
+initialize_state()
+
+if st.session_state.test_phase == 'start':
+    show_start_page()
+elif st.session_state.test_phase == 'break':
+    show_break_screen()
+elif st.session_state.test_phase == 'testing':
+    show_testing_interface()
+elif st.session_state.test_phase == 'end':
+    calculate_and_show_results()
