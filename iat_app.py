@@ -69,13 +69,10 @@ def record_response(key_pressed):
     
     st.session_state.start_time = 0
     
-    # === KORRIGIERTE LOGIK FÜR FEHLERBEHANDLUNG ===
     if is_correct:
-        # Antwort war richtig: Feedback ausblenden und zum nächsten Versuch übergehen.
         st.session_state.show_feedback = False
         st.session_state.current_trial += 1
         
-        # Prüfen, ob der Block oder der gesamte Test beendet ist.
         if st.session_state.current_trial >= len(st.session_state.stimuli_list):
             st.session_state.current_block += 1
             if st.session_state.current_block >= len(IAT_BLOCKS):
@@ -83,13 +80,15 @@ def record_response(key_pressed):
             else:
                 st.session_state.test_phase = 'break'
     else:
-        # Antwort war falsch: Feedback anzeigen, aber beim AKTUELLEN Versuch bleiben.
         st.session_state.show_feedback = True
+    
+    # === DIE ENTSCHEIDENDE KORREKTUR ===
+    # Zwingt die App, sich nach JEDEM Klick sofort neu zu laden und den neuen Zustand anzuzeigen.
+    st.rerun()
 
 def calculate_and_show_results():
     st.title("Testergebnis")
     df = pd.DataFrame(st.session_state.results)
-    # Für die Auswertung werden nur die korrekten Antworten berücksichtigt
     critical_trials = df[df['is_critical'] & df['correct']]
     
     try:
