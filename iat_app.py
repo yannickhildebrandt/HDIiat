@@ -5,7 +5,6 @@ import pandas as pd
 from streamlit_shortcuts import shortcut_button # Der korrekte Import
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
-# (Dieser Teil bleibt unverändert)
 STIMULI = {
     'canonical': ['Trainings durchführen', 'Vorträge erstellen', 'Folien bearbeiten', 'Wissen teilen', 'Präsentation', 'Grafiken präsentieren', 'Verkaufspräsentation', 'Folien erstellen'],
     'non_affordance': ['Datenverschlüsselung', 'Spiele herunterladen', 'Instant Messaging', 'Im Internet surfen', 'Dateien wiederherstellen', 'Musik streamen', 'Online bezahlen', 'Virenscan'],
@@ -20,19 +19,17 @@ CATEGORIES = {
 }
 
 # --- 2. Definition der 7 Testblöcke ---
-# (Dieser Teil bleibt unverändert)
 IAT_BLOCKS = [
     {'left': ['canonical'], 'right': ['non_affordance'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
     {'left': ['useful'], 'right': ['useless'], 'stimuli': ['useful', 'useless'], 'trials': 20, 'is_practice': True},
     {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
     {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True},
     {'left': ['non_affordance'], 'right': ['canonical'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
-    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
-    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True}
+    {'left': ['non_affordance'], 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
+    {'left': ['non_affordance'], 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True}
 ]
 
 # --- 3. Funktionen zur Steuerung des Tests ---
-# (Die Kernlogik bleibt ebenfalls unverändert)
 def initialize_state():
     if 'test_phase' not in st.session_state:
         st.session_state.test_phase = 'start'
@@ -140,17 +137,18 @@ elif st.session_state.test_phase == 'testing':
     if st.session_state.show_feedback:
         st.markdown('<p style="color:red; font-size: 40px; text-align: center;">X</p>', unsafe_allow_html=True)
 
-    # === KORRIGIERTE LOGIK MIT shortcut_button ===
     # Wir erstellen zwei Spalten für die Buttons
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        # Dieser Block wird ausgeführt, wenn 'E' geklickt ODER 'e' gedrückt wird
-        if shortcut_button(label="E", shortcuts=['e'], use_container_width=True, key='button_e'):
+        # KORRIGIERT: Das Argument heißt 'shortcut', nicht 'shortcuts'
+        if shortcut_button(label="E", shortcut='e', use_container_width=True, key=f'button_e_{st.session_state.current_trial}'):
             record_response('e')
+            st.rerun()
     with col_btn2:
-        # Dieser Block wird ausgeführt, wenn 'I' geklickt ODER 'i' gedrückt wird
-        if shortcut_button(label="I", shortcuts=['i'], use_container_width=True, key='button_i'):
+        # KORRIGIERT: Das Argument heißt 'shortcut', nicht 'shortcuts'
+        if shortcut_button(label="I", shortcut='i', use_container_width=True, key=f'button_i_{st.session_state.current_trial}'):
             record_response('i')
+            st.rerun()
             
     # Startet die Zeitmessung, nachdem alles gerendert wurde
     if st.session_state.start_time == 0 and not st.session_state.show_feedback:
