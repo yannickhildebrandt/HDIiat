@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 import pandas as pd
-from streamlit_shortcuts import shortcut_button # Der korrekte Import
+from streamlit_shortcuts import shortcut_button
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
 STIMULI = {
@@ -25,8 +25,10 @@ IAT_BLOCKS = [
     {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
     {'left': ['canonical', 'useful'], 'right': ['non_affordance', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True},
     {'left': ['non_affordance'], 'right': ['canonical'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
-    {'left': ['non_affordance'], 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
-    {'left': ['non_affordance'], 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True}
+    # KORRIGIERTE ZEILE 28
+    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 20, 'is_practice': True},
+    # KORRIGIERTE ZEILE 29
+    {'left': ['non_affordance', 'useful'], 'right': ['canonical', 'useless'], 'stimuli': ['canonical', 'useful', 'non_affordance', 'useless'], 'trials': 40, 'is_critical': True}
 ]
 
 # --- 3. Funktionen zur Steuerung des Tests ---
@@ -126,31 +128,25 @@ elif st.session_state.test_phase == 'testing':
     left_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['left']])
     right_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['right']])
 
-    # Layout für die Kategorien
     col1, col2 = st.columns(2)
     with col1: st.markdown(f'<p style="color:green; font-size: 20px;">{left_cat_text}</p>', unsafe_allow_html=True)
     with col2: st.markdown(f'<p style="color:blue; font-size: 20px; text-align: right;">{right_cat_text}</p>', unsafe_allow_html=True)
     
-    # Stimulus anzeigen
     st.markdown(f'<div style="text-align: center; font-size: 32px; font-weight: bold; padding: 50px 0;">{current_stimulus["text"]}</div>', unsafe_allow_html=True)
     
     if st.session_state.show_feedback:
         st.markdown('<p style="color:red; font-size: 40px; text-align: center;">X</p>', unsafe_allow_html=True)
 
-    # Wir erstellen zwei Spalten für die Buttons
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        # KORRIGIERT: Das Argument heißt 'shortcut', nicht 'shortcuts'
         if shortcut_button(label="E", shortcut='e', use_container_width=True, key=f'button_e_{st.session_state.current_trial}'):
             record_response('e')
             st.rerun()
     with col_btn2:
-        # KORRIGIERT: Das Argument heißt 'shortcut', nicht 'shortcuts'
         if shortcut_button(label="I", shortcut='i', use_container_width=True, key=f'button_i_{st.session_state.current_trial}'):
             record_response('i')
             st.rerun()
             
-    # Startet die Zeitmessung, nachdem alles gerendert wurde
     if st.session_state.start_time == 0 and not st.session_state.show_feedback:
         st.session_state.start_time = time.time()
 
