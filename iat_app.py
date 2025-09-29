@@ -4,7 +4,6 @@ import time
 import pandas as pd
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
-# (Dieser Teil bleibt unverändert)
 STIMULI = {
     'canonical': ['Trainings durchführen', 'Vorträge erstellen', 'Folien bearbeiten', 'Wissen teilen', 'Präsentation', 'Grafiken präsentieren', 'Verkaufspräsentation', 'Folien erstellen'],
     'non_affordance': ['Datenverschlüsselung', 'Spiele herunterladen', 'Instant Messaging', 'Im Internet surfen', 'Dateien wiederherstellen', 'Musik streamen', 'Online bezahlen', 'Virenscan'],
@@ -19,7 +18,6 @@ CATEGORIES = {
 }
 
 # --- 2. Definition der 7 Testblöcke ---
-# (Dieser Teil bleibt unverändert)
 IAT_BLOCKS = [
     {'left': ['canonical'], 'right': ['non_affordance'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
     {'left': ['useful'], 'right': ['useless'], 'stimuli': ['useful', 'useless'], 'trials': 20, 'is_practice': True},
@@ -71,21 +69,25 @@ def record_response(key_pressed):
     
     st.session_state.start_time = 0
     
-    if is_correct:
-        st.session_state.show_feedback = False
-        st.session_state.current_trial += 1
-        if st.session_state.current_trial >= len(st.session_state.stimuli_list):
-            st.session_state.current_block += 1
-            if st.session_state.current_block >= len(IAT_BLOCKS):
-                st.session_state.test_phase = 'end'
-            else:
-                st.session_state.test_phase = 'break'
-    else:
-        st.session_state.show_feedback = True
+    # === KORRIGIERTE UND VEREINFACHTE LOGIK ===
+    # Setze das Feedback-Flag basierend auf der Korrektheit
+    st.session_state.show_feedback = not is_correct
+    
+    # Gehe IMMER zum nächsten Versuch, egal ob die Antwort richtig oder falsch war.
+    st.session_state.current_trial += 1
+    
+    # Prüfe, ob der Block zu Ende ist und gehe ggf. zum nächsten Block oder zum Ende über.
+    if st.session_state.current_trial >= len(st.session_state.stimuli_list):
+        st.session_state.current_block += 1
+        if st.session_state.current_block >= len(IAT_BLOCKS):
+            st.session_state.test_phase = 'end'
+        else:
+            st.session_state.test_phase = 'break'
 
 def calculate_and_show_results():
     st.title("Testergebnis")
     df = pd.DataFrame(st.session_state.results)
+    # Für die Auswertung werden nur die korrekten Antworten berücksichtigt
     critical_trials = df[df['is_critical'] & df['correct']]
     
     try:
@@ -136,8 +138,6 @@ elif st.session_state.test_phase == 'testing':
     if st.session_state.show_feedback:
         st.markdown('<p style="color:red; font-size: 40px; text-align: center;">X</p>', unsafe_allow_html=True)
 
-    # === GEÄNDERTE LOGIK: Standard st.button mit on_click Callback ===
-    # Diese Methode ist die stabilste in Streamlit.
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         st.button("E", on_click=record_response, args=('e',), use_container_width=True, key=f'button_e_{st.session_state.current_trial}')
