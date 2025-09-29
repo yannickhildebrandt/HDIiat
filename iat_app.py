@@ -9,29 +9,31 @@ HDI_DARK_GRAY = "#333333"
 HDI_LIGHT_GRAY = "#f5f5f5"
 HDI_RED = "#d9534f"
 
-# --- 1. Konfiguration des Tests: Kategorien und Stimuli ---
+# --- 1. Konfiguration des Tests: Kategorien und Stimuli (NEUES THEMA) ---
 STIMULI = {
-    'rohstoff': ['KI-Training', 'Risikoprognose', 'Kundenprofil', 'Betrugserkennung', 'Personalisierung', 'Vorausschau'],
-    'beleg': ['Schadensakte', 'Quartalsbericht', 'Kundenhistorie', 'Protokoll', 'Dokumentation', 'Nachweis'],
-    'zukunft': ['Potenzial', 'Vorhersage', 'Gestalten', 'Entwickeln', 'Wertschöpfung', 'Chance'],
-    'vergangenheit': ['Abschließen', 'Archivieren', 'Erledigt', 'Nachweisen', 'Bürokratie', 'Abgelegt']
+    'experiment': ['Prototyp', 'MVP', 'A/B-Test', 'Hypothese', 'Sprint', 'Feedback-Schleife', 'Iteration', 'User Story'],
+    'plan': ['Wasserfallmodell', 'Meilenstein', 'Endabnahme', 'Lastenheft', 'Null-Fehler-Ziel', 'Freigabeprozess', 'Gantt-Diagramm', 'Pflichtenheft'],
+    'entdeckung': ['Anpassung', 'Lernen', 'Flexibilität', 'Fortschritt', 'Agilität', 'Erkenntnis', 'Wachstum'],
+    'kontrolle': ['Planbarkeit', 'Sicherheit', 'Effizienz', 'Vorhersagbarkeit', 'Stabilität', 'Regelwerk', 'Standardisierung']
 }
 
 CATEGORIES = {
-    'rohstoff': 'Daten als Rohstoff',
-    'beleg': 'Daten als Beleg',
-    'zukunft': 'Zukunft',
-    'vergangenheit': 'Vergangenheit'
+    'experiment': 'Lernendes Experiment',
+    'plan': 'Perfekter Plan',
+    'entdeckung': 'Entdeckung',
+    'kontrolle': 'Kontrolle'
 }
 
+# Block 4 testet die Assoziation: (Experiment + Entdeckung)
+# Block 7 testet die Assoziation: (Experiment + Kontrolle)
 IAT_BLOCKS = [
-    {'left': ['rohstoff'], 'right': ['beleg'], 'stimuli': ['rohstoff', 'beleg'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Daten-Typ'},
-    {'left': ['zukunft'], 'right': ['vergangenheit'], 'stimuli': ['zukunft', 'vergangenheit'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Zeitbezug'},
-    {'left': ['rohstoff', 'zukunft'], 'right': ['beleg', 'vergangenheit'], 'stimuli': ['rohstoff', 'zukunft', 'beleg', 'vergangenheit'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 1 (Übung)'},
-    {'left': ['rohstoff', 'zukunft'], 'right': ['beleg', 'vergangenheit'], 'stimuli': ['rohstoff', 'zukunft', 'beleg', 'vergangenheit'], 'trials': 40, 'is_critical': True, 'name': 'Test: Rohstoff + Zukunft'},
-    {'left': ['beleg'], 'right': ['rohstoff'], 'stimuli': ['rohstoff', 'beleg'], 'trials': 20, 'is_practice': True, 'name': 'Umgewöhnung: Daten-Typ'},
-    {'left': ['beleg', 'zukunft'], 'right': ['rohstoff', 'vergangenheit'], 'stimuli': ['rohstoff', 'zukunft', 'beleg', 'vergangenheit'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 2 (Übung)'},
-    {'left': ['beleg', 'zukunft'], 'right': ['rohstoff', 'vergangenheit'], 'stimuli': ['rohstoff', 'zukunft', 'beleg', 'vergangenheit'], 'trials': 40, 'is_critical': True, 'name': 'Test: Beleg + Zukunft'}
+    {'left': ['experiment'], 'right': ['plan'], 'stimuli': ['experiment', 'plan'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Projekt-Typ'},
+    {'left': ['entdeckung'], 'right': ['kontrolle'], 'stimuli': ['entdeckung', 'kontrolle'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Prozess-Ziel'},
+    {'left': ['experiment', 'entdeckung'], 'right': ['plan', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 1 (Übung)'},
+    {'left': ['experiment', 'entdeckung'], 'right': ['plan', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 40, 'is_critical': True, 'name': 'Test: Experiment + Entdeckung'},
+    {'left': ['plan'], 'right': ['experiment'], 'stimuli': ['experiment', 'plan'], 'trials': 20, 'is_practice': True, 'name': 'Umgewöhnung: Projekt-Typ'},
+    {'left': ['plan', 'entdeckung'], 'right': ['experiment', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 2 (Übung)'},
+    {'left': ['plan', 'entdeckung'], 'right': ['experiment', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 40, 'is_critical': True, 'name': 'Test: Plan + Entdeckung'}
 ]
 
 # --- 3. Funktionen zur Steuerung des Tests (Unverändert) ---
@@ -97,10 +99,7 @@ def load_css():
         .stApp {{ background-color: {HDI_LIGHT_GRAY}; }}
         .stApp, .stMarkdown, h1, h2, h3, h4, h5, h6 {{ color: {HDI_DARK_GRAY}; }}
         h1, h2, h3 {{ animation: fadeIn 0.5s ease-in, slideInUp 0.5s ease-out; }}
-        
-        /* KORREKTUR: Zentriert die Hauptüberschriften */
         h1, h2 {{ text-align: center; }}
-
         .card {{ background-color: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-top: 1.5rem; animation: fadeIn 0.5s ease-in-out; }}
         .card p {{ margin-bottom: 0; }}
         .stButton>button {{ background-image: linear-gradient(to right, {HDI_GREEN} 0%, #009a6e 51%, {HDI_GREEN} 100%); color: white; border-radius: 10px; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border: none; transition: 0.5s; background-size: 200% auto; box-shadow: 0 4px 10px rgba(0, 122, 82, 0.3); }}
@@ -132,6 +131,7 @@ def show_footer():
         </div>""", unsafe_allow_html=True)
 
 def jump_to_end_for_debug():
+    # Angepasste Debug-Daten für die neue Logik
     st.session_state.results = [
         {'block': 4, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 650 + random.randint(-50, 50)},
         {'block': 4, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 750 + random.randint(-50, 50)},
@@ -142,13 +142,12 @@ def jump_to_end_for_debug():
 
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
-    # KORREKTUR: Inline-Style entfernt, da dies nun global per CSS geregelt wird
-    st.markdown("<h2 style='color: #555; margin-bottom: 2rem;'>Digitale Kognition: Daten als Rohstoff vs. Beleg</h2>", unsafe_allow_html=True)
-    st.info("**Willkommen!** Finden Sie Ihre unbewusste Grundhaltung gegenüber Daten heraus.", icon="💡")
+    st.markdown("<h2 style='color: #555; margin-bottom: 2rem;'>Agile Kognition: Perfekter Plan vs. Lernendes Experiment</h2>", unsafe_allow_html=True)
+    st.info("**Willkommen!** Entdecken Sie Ihre unbewusste Haltung zu Arbeitsprozessen und Unsicherheit.", icon="💡")
     
     st.markdown("""<div class="card">
         <h4>🧠 Worum geht es hier?</h4>
-        <p>Dieser Test misst die unbewusste Grundhaltung gegenüber Daten. Im Versicherungsalltag sind Daten oft mit Dokumentationspflicht und Nachweisbarkeit verbunden ("Ist das revisionssicher?"). Ein digitales Mindset sieht in denselben Daten jedoch den Treibstoff für KI-Modelle, die zukünftige Risiken prognostizieren und neue Produkte ermöglichen. Der "Aha-Moment" entsteht, wenn Sie erkennen, ob Sie Daten implizit als administrative Last (Vergangenheit) oder als strategischen Rohstoff (Zukunft) wahrnehmen.</p>
+        <p>In traditionellen Projekten dominiert oft das Ziel, einen perfekten Plan fehlerfrei umzusetzen. Ein agiles Mindset hingegen begreift Projekte als Experimente, bei denen durch Ausprobieren und Feedback gelernt wird. Dieser Test misst, ob Ihre unbewusste Reaktion auf Projekte eher von der Angst vor Planabweichung (Kontrolle) oder der Freude am Lernen (Entdeckung) geprägt ist.</p>
     </div>""", unsafe_allow_html=True)
     
     st.markdown("""<div class="card">
@@ -222,8 +221,8 @@ def get_iat_effect_visualization_html(iat_effect):
     bar_class = "positive" if iat_effect >= 0 else "negative"
     
     return f"""<div style="font-size: 0.9rem; display: flex; justify-content: space-between; color: #555;">
-            <span>Fokus auf <b>Qualität & Beleg</b></span>
-            <span>Fokus auf <b>Potenzial & Zukunft</b></span>
+            <span>Fokus auf <b>Plan & Kontrolle</b></span>
+            <span>Fokus auf <b>Experiment & Entdeckung</b></span>
         </div>
         <div class="iat-result-bar-container">
             <div class="iat-result-center-line"></div>
@@ -236,7 +235,9 @@ def calculate_and_show_results():
     critical_trials = df[df['is_critical'] & df['correct']]
 
     try:
+        # Block 4 ist die "kongruente" Paarung für ein agiles Mindset: Experiment + Entdeckung
         avg_rt_block4 = critical_trials[critical_trials['block'] == 4]['rt'].mean()
+        # Block 7 ist die "inkongruente" Paarung: Experiment + Kontrolle
         avg_rt_block7 = critical_trials[critical_trials['block'] == 7]['rt'].mean()
 
         if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7): raise ValueError("Nicht genügend Daten.")
@@ -245,11 +246,11 @@ def calculate_and_show_results():
         
         interpretation_html = ""
         if iat_effect > 50:
-            interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Potenzial-fokussiertes Mindset:</b> Sie assoziieren 'Daten als Rohstoff' implizit stärker mit <b>'Zukunft'</b>. Dies deutet auf eine Denkweise hin, die in Daten vor allem das Potenzial für Neues und Zukünftiges sieht – eine wichtige Grundlage für Innovation und strategische Entwicklung.</div>"
+            interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Agil-fokussiertes Mindset:</b> Sie assoziieren 'Lernendes Experiment' implizit stärker mit <b>'Entdeckung'</b>. Dies deutet auf eine Denkweise hin, die Unsicherheit als Chance zum Lernen begreift und Flexibilität schätzt – eine wichtige Grundlage für agiles Arbeiten und Innovation.</div>"
         elif iat_effect < -50:
-            interpretation_html = "<div style='background-color: #fff3cd; color: #856404; padding: 1rem; border-radius: 8px;'><b>Qualitäts-fokussiertes Mindset:</b> Sie assoziieren 'Daten als Rohstoff' implizit stärker mit <b>'Vergangenheit'</b>. Dies deutet auf eine Denkweise hin, die großen Wert auf Datenqualität, Korrektheit und Nachweisbarkeit legt. Dieses stabile Fundament ist entscheidend für verlässliche Prozesse und revisionssicheres Arbeiten.</div>"
+            interpretation_html = "<div style='background-color: #fff3cd; color: #856404; padding: 1rem; border-radius: 8px;'><b>Planungs-fokussiertes Mindset:</b> Sie assoziieren 'Lernendes Experiment' implizit stärker mit <b>'Kontrolle'</b>. Dies deutet auf eine Denkweise hin, die großen Wert auf Planbarkeit, Effizienz und Stabilität legt. Dieses Bedürfnis nach Sicherheit ist entscheidend für verlässliche Ergebnisse in vorhersagbaren Umfeldern.</div>"
         else:
-            interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Flexibles Mindset:</b> Ihre impliziten Assoziationen sind weitgehend ausgeglichen. Dies deutet auf einen pragmatischen und flexiblen Umgang mit Daten hin. Sie können je nach Kontext sowohl die Notwendigkeit eines validen Belegs als auch das Potenzial für die Zukunft erkennen.</div>"
+            interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Pragmatisches Mindset:</b> Ihre impliziten Assoziationen sind weitgehend ausgeglichen. Dies deutet auf eine situative und pragmatische Herangehensweise hin. Sie können je nach Projektkontext sowohl den Wert von Stabilität und Planung als auch die Notwendigkeit von Flexibilität und Lernen erkennen.</div>"
 
         viz_html = get_iat_effect_visualization_html(iat_effect)
 
@@ -262,13 +263,13 @@ def calculate_and_show_results():
         st.markdown(f"""<div class="card">
             <h4>⏱️ Detailauswertung</h4>
             <div class="metrics-container">
-                <div class="metric-col"><div class="metric-label">Ø Zeit (Rohstoff + Zukunft)</div><div class="metric-value">{avg_rt_block4:.0f} ms</div></div>
-                <div class="metric-col"><div class="metric-label">Ø Zeit (Rohstoff + Vergangenheit)</div><div class="metric-value">{avg_rt_block7:.0f} ms</div></div>
+                <div class="metric-col"><div class="metric-label">Ø Zeit (Experiment + Entdeckung)</div><div class="metric-value">{avg_rt_block4:.0f} ms</div></div>
+                <div class="metric-col"><div class="metric-label">Ø Zeit (Experiment + Kontrolle)</div><div class="metric-value">{avg_rt_block7:.0f} ms</div></div>
                 <div class="metric-col"><div class="metric-label">IAT-Effekt (Differenz)</div><div class="metric-value">{iat_effect:.0f} ms</div></div>
             </div>
             <hr>
             <p><b>Wie kommt das Ergebnis zustande?</b><br>
-            Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block, der "Daten als Rohstoff" mit "Vergangenheit" kombiniert, mehr Zeit zur Zuordnung benötigt haben. Ihr Gehirn verarbeitet schneller, was es als zusammengehörig empfindet. Dies deutet auf eine stärkere unbewusste Verbindung zwischen "Rohstoff" und "Zukunft" hin.</p>
+            Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block, der "Lernendes Experiment" mit "Kontrolle" kombiniert, mehr Zeit zur Zuordnung benötigt haben. Ihr Gehirn verarbeitet schneller, was es als zusammengehörig empfindet. Dies deutet auf eine stärkere unbewusste Verbindung zwischen "Experiment" und "Entdeckung" hin.</p>
             <p style="margin-top: 1rem;"><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen. Es ist keine Bewertung Ihrer Person oder Ihrer fachlichen Kompetenz, sondern ein Impuls zur Selbstreflexion.</p>
         </div>""", unsafe_allow_html=True)
 
@@ -284,7 +285,7 @@ def calculate_and_show_results():
 
 
 # --- 5. Hauptlogik der Streamlit App (Unverändert) ---
-st.set_page_config(layout="centered", page_title="IAT Digitale Kognition")
+st.set_page_config(layout="centered", page_title="IAT Agile Kognition")
 load_css()
 initialize_state()
 
