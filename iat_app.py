@@ -65,17 +65,15 @@ def prepare_block(block_index):
 def record_response(key_pressed):
     """Verarbeitet die Antwort des Nutzers, misst die Zeit und prüft die Korrektheit."""
     if st.session_state.start_time == 0:
-        return  # Verhindert doppelte Aufzeichnung
+        return
 
     reaction_time = (time.time() - st.session_state.start_time) * 1000
     block_config = IAT_BLOCKS[st.session_state.current_block]
     current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
 
-    # Bestimmt, ob die Antwort korrekt war
     is_correct = (key_pressed == 'e' and current_stimulus['category'] in block_config['left']) or \
                  (key_pressed == 'i' and current_stimulus['category'] in block_config['right'])
 
-    # Speichert das Ergebnis nur, wenn kein Feedback angezeigt wird (verhindert doppelte Speicherung bei Fehler)
     if not st.session_state.show_feedback:
         st.session_state.results.append({
             'block': st.session_state.current_block + 1,
@@ -85,21 +83,18 @@ def record_response(key_pressed):
             'rt': reaction_time
         })
 
-    st.session_state.start_time = 0  # Zeit zurücksetzen
+    st.session_state.start_time = 0
 
     if is_correct:
         st.session_state.show_feedback = False
         st.session_state.current_trial += 1
-        # Prüfen, ob der Block beendet ist
         if st.session_state.current_trial >= len(st.session_state.stimuli_list):
             st.session_state.current_block += 1
-            # Prüfen, ob der gesamte Test beendet ist
             if st.session_state.current_block >= len(IAT_BLOCKS):
                 st.session_state.test_phase = 'end'
             else:
                 st.session_state.test_phase = 'break'
     else:
-        # Bei Fehler Feedback anzeigen
         st.session_state.show_feedback = True
 
 # --- 4. UI-Komponenten und Styling ---
@@ -109,20 +104,15 @@ def load_css():
     st.markdown(f"""
     <style>
         /* Globale Stile */
-        body {{
-            background-color: {HDI_LIGHT_GRAY};
-        }}
         .stApp {{
             background-color: {HDI_LIGHT_GRAY};
         }}
-        /* Hauptcontainer für Start- und Ergebnisseite */
-        .main-container {{
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+        /* KORREKTUR: Explizit die Textfarbe für alle relevanten Elemente setzen */
+        .stApp, .stMarkdown, h1, h2, h3, h4, h5, h6 {{
             color: {HDI_DARK_GRAY};
         }}
+
         /* Buttons */
         .stButton>button {{
             background-color: {HDI_GREEN};
@@ -141,8 +131,9 @@ def load_css():
         .stButton>button:focus {{
             box-shadow: 0 0 0 2px {HDI_DARK_GRAY};
         }}
-        /* IAT-Test Buttons */
-        .iat-button button {{
+        
+        /* IAT-Test Buttons (Typ "secondary") */
+        .stButton>button[kind="secondary"] {{
             height: 150px;
             white-space: pre-wrap; /* Erlaubt Zeilenumbrüche */
             font-size: 1.2rem;
@@ -150,9 +141,11 @@ def load_css():
             color: {HDI_DARK_GRAY};
             border: 2px solid {HDI_DARK_GRAY};
         }}
-        .iat-button button:hover {{
+        .stButton>button[kind="secondary"]:hover {{
             background-color: #f0f0f0;
+            color: {HDI_DARK_GRAY}; /* Farbe beibehalten */
         }}
+
         /* Stimulus Text in der Mitte */
         .stimulus-text {{
             text-align: center;
@@ -161,6 +154,7 @@ def load_css():
             padding: 50px 0;
             color: {HDI_GREEN};
         }}
+
         /* Feedback-Kreuz */
         .feedback-x {{
             color: red;
@@ -168,6 +162,7 @@ def load_css():
             text-align: center;
             font-weight: bold;
         }}
+
         /* Metriken auf der Ergebnisseite */
         .stMetric {{
             background-color: #f9f9f9;
@@ -220,7 +215,6 @@ def show_testing_interface():
     if st.session_state.show_feedback:
         st.markdown('<p class="feedback-x">X</p>', unsafe_allow_html=True)
     else:
-        # Platzhalter, damit das Layout nicht springt, wenn das X erscheint
         st.markdown('<p style="color:white; font-size: 4rem; text-align: center;">X</p>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
@@ -229,12 +223,9 @@ def show_testing_interface():
     with col2:
         st.button(right_label, on_click=record_response, args=('i',), use_container_width=True, key=f'btn_i_{st.session_state.current_trial}', type="secondary")
 
-    # Startet die Zeitmessung, wenn sie noch nicht läuft
     if st.session_state.start_time == 0:
         st.session_state.start_time = time.time()
-        # Ein kleiner Trick, um die UI neu zu rendern, falls nötig
         time.sleep(0.01)
-
 
 def calculate_and_show_results():
     """Berechnet die Ergebnisse und zeigt die Interpretationsseite an."""
@@ -242,20 +233,15 @@ def calculate_and_show_results():
 
     with st.container(border=True):
         df = pd.DataFrame(st.session_state.results)
-        
-        # Nur korrekte Versuche aus den kritischen Blöcken verwenden
         critical_trials = df[df['is_critical'] & df['correct']]
         
         try:
-            # Block 4: PowerPoint-Anwendung + Nützlich
             avg_rt_block4 = critical_trials[critical_trials['block'] == 4]['rt'].mean()
-            # Block 7: PowerPoint-Anwendung + Nutzlos
             avg_rt_block7 = critical_trials[critical_trials['block'] == 7]['rt'].mean()
 
             if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7):
                 raise ValueError("Nicht genügend Daten in einem der kritischen Blöcke.")
             
-            # Der IAT-Effekt ist die Differenz der Reaktionszeiten
             iat_effect = avg_rt_block7 - avg_rt_block4
 
             st.subheader("Ihre Reaktionszeiten im Überblick")
@@ -268,19 +254,18 @@ def calculate_and_show_results():
                 st.metric(label="IAT-Effekt (Differenz)", value=f"{iat_effect:.0f} ms")
             
             st.divider()
-
             st.subheader("Was bedeutet dieses Ergebnis?")
             
             if iat_effect > 150:
-                st.info("**Starker positiver Effekt:** Ihre Ergebnisse deuten auf eine starke implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nützlich' hin. Sie haben die Begriffe deutlich schneller zugeordnet, als diese beiden Kategorien auf derselben Taste lagen.")
+                st.info("**Starker positiver Effekt:** Ihre Ergebnisse deuten auf eine starke implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nützlich' hin.")
             elif iat_effect > 50:
-                st.info("**Moderater positiver Effekt:** Ihre Ergebnisse deuten auf eine moderate implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nützlich' hin. Sie waren schneller, als diese beiden Kategorien gepaart waren.")
+                st.info("**Moderater positiver Effekt:** Ihre Ergebnisse deuten auf eine moderate implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nützlich' hin.")
             elif iat_effect < -150:
-                st.warning("**Starker negativer Effekt:** Ihre Ergebnisse deuten auf eine starke implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nutzlos' hin. Sie waren deutlich schneller, als 'PowerPoint-Anwendung' mit 'Nutzlos' gepaart war.")
+                st.warning("**Starker negativer Effekt:** Ihre Ergebnisse deuten auf eine starke implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nutzlos' hin.")
             elif iat_effect < -50:
                  st.warning("**Moderater negativer Effekt:** Ihre Ergebnisse deuten auf eine moderate implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nutzlos' hin.")
             else:
-                st.success("**Geringer oder kein Effekt:** Ihre Reaktionszeiten zeigen keine klare Präferenz. Ihre implizite Assoziation zwischen PowerPoint-Anwendungen und Nützlichkeit bzw. Nutzlosigkeit scheint ausgeglichen zu sein.")
+                st.success("**Geringer oder kein Effekt:** Ihre Reaktionszeiten zeigen keine klare Präferenz.")
 
             st.markdown("""
             **Wie kommt das Ergebnis zustande?**
@@ -288,7 +273,7 @@ def calculate_and_show_results():
             - **Block 7** hat 'PowerPoint-Anwendung' und 'Nutzlos' kombiniert. Wenn diese Kombination für Sie "unlogisch" ist, benötigen Sie unbewusst mehr Zeit, um die Begriffe zuzuordnen.
             - Die **Differenz** dieser Zeiten (der IAT-Effekt) ist ein Maß für die Stärke Ihrer automatischen Assoziation.
 
-            **Wichtiger Hinweis:** Ein IAT misst unbewusste Assoziationen, nicht unbedingt Ihre bewussten Überzeugungen. Das Ergebnis kann durch viele Faktoren beeinflusst werden (z.B. kulturelle Prägung, persönliche Erfahrungen) und stellt keine endgültige "Wahrheit" über Ihre Einstellung dar. Es ist eine Momentaufnahme Ihrer mentalen Verknüpfungen.
+            **Wichtiger Hinweis:** Ein IAT misst unbewusste Assoziationen, nicht unbedingt Ihre bewussten Überzeugungen. Es ist eine Momentaufnahme Ihrer mentalen Verknüpfungen.
             """)
             
             with st.expander("Rohdaten der Messung anzeigen"):
@@ -296,10 +281,9 @@ def calculate_and_show_results():
 
         except (KeyError, ZeroDivisionError, ValueError) as e:
             st.error(f"Es konnten keine ausreichenden Daten gesammelt werden, um ein Ergebnis zu berechnen. Bitte versuchen Sie es erneut. Fehler: {e}")
-            st.dataframe(df) # Zeigt die gesammelten Daten zur Fehlersuche an
+            st.dataframe(df)
     
     if st.button("Test neu starten", use_container_width=True):
-        # Alle Session-State-Variablen löschen, um einen sauberen Neustart zu gewährleisten
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
@@ -310,25 +294,19 @@ st.set_page_config(layout="centered", page_title="IAT PowerPoint")
 load_css()
 initialize_state()
 
-# Haupt-Router basierend auf der Testphase
 if st.session_state.test_phase == 'start':
     show_start_page()
-
 elif st.session_state.test_phase == 'break':
     block_config = IAT_BLOCKS[st.session_state.current_block]
     st.header(f"Block {st.session_state.current_block + 1} / {len(IAT_BLOCKS)}")
     st.subheader(f"Thema: {block_config['name']}")
     st.progress((st.session_state.current_block) / len(IAT_BLOCKS))
     
-    # Automatisch zum Test übergehen
-    time.sleep(3) # Pause von 3 Sekunden
+    time.sleep(3)
     st.session_state.test_phase = 'testing'
     prepare_block(st.session_state.current_block)
     st.rerun()
-
 elif st.session_state.test_phase == 'testing':
-    # Die UI-Logik ist in einer eigenen Funktion für die Übersichtlichkeit
     show_testing_interface()
-
 elif st.session_state.test_phase == 'end':
     calculate_and_show_results()
