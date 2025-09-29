@@ -11,29 +11,29 @@ HDI_RED = "#d9534f"
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli (NEUES THEMA) ---
 STIMULI = {
-    'experiment': ['Prototyp', 'MVP', 'A/B-Test', 'Hypothese', 'Sprint', 'Feedback-Schleife', 'Iteration', 'User Story'],
-    'plan': ['Wasserfallmodell', 'Meilenstein', 'Endabnahme', 'Lastenheft', 'Null-Fehler-Ziel', 'Freigabeprozess', 'Gantt-Diagramm', 'Pflichtenheft'],
-    'entdeckung': ['Anpassung', 'Lernen', 'Flexibilität', 'Fortschritt', 'Agilität', 'Erkenntnis', 'Wachstum'],
-    'kontrolle': ['Planbarkeit', 'Sicherheit', 'Effizienz', 'Vorhersagbarkeit', 'Stabilität', 'Regelwerk', 'Standardisierung']
+    'sparring': ['Idee verfeinern', 'Alternativen fragen', 'Kritisch prüfen', 'Neu kombinieren', 'Gegenentwurf erstellen', 'Brainstorming starten', 'Hypothese testen', 'Konzept spiegeln'],
+    'auftrag': ['Text erstellen', 'Aufgabe lösen', 'Befehl ausführen', 'Ergebnis liefern', 'E-Mail schreiben', 'Zusammenfassen', 'Liste erstellen', 'Daten sortieren'],
+    'innovativ': ['Kreativ', 'Bahnbrechend', 'Neuartig', 'Inspirierend', 'Überraschend', 'Einzigartig', 'Durchbruch'],
+    'standard': ['Effizient', 'Erwartbar', 'Routine', 'Vorhersehbar', 'Bekannt', 'Ausreichend', 'Funktional']
 }
 
 CATEGORIES = {
-    'experiment': 'Lernendes Experiment',
-    'plan': 'Perfekter Plan',
-    'entdeckung': 'Entdeckung',
-    'kontrolle': 'Kontrolle'
+    'sparring': 'KI als Sparringspartner',
+    'auftrag': 'KI als Auftraggeber',
+    'innovativ': 'Innovativ',
+    'standard': 'Standard'
 }
 
-# Block 4 testet die Assoziation: (Experiment + Entdeckung)
-# Block 7 testet die Assoziation: (Experiment + Kontrolle)
+# Block 4 testet die Assoziation: (Sparringspartner + Innovativ)
+# Block 7 testet die Assoziation: (Sparringspartner + Standard)
 IAT_BLOCKS = [
-    {'left': ['experiment'], 'right': ['plan'], 'stimuli': ['experiment', 'plan'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Projekt-Typ'},
-    {'left': ['entdeckung'], 'right': ['kontrolle'], 'stimuli': ['entdeckung', 'kontrolle'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Prozess-Ziel'},
-    {'left': ['experiment', 'entdeckung'], 'right': ['plan', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 1 (Übung)'},
-    {'left': ['experiment', 'entdeckung'], 'right': ['plan', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 40, 'is_critical': True, 'name': 'Test: Experiment + Entdeckung'},
-    {'left': ['plan'], 'right': ['experiment'], 'stimuli': ['experiment', 'plan'], 'trials': 20, 'is_practice': True, 'name': 'Umgewöhnung: Projekt-Typ'},
-    {'left': ['plan', 'entdeckung'], 'right': ['experiment', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 2 (Übung)'},
-    {'left': ['plan', 'entdeckung'], 'right': ['experiment', 'kontrolle'], 'stimuli': ['experiment', 'entdeckung', 'plan', 'kontrolle'], 'trials': 40, 'is_critical': True, 'name': 'Test: Plan + Entdeckung'}
+    {'left': ['sparring'], 'right': ['auftrag'], 'stimuli': ['sparring', 'auftrag'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: KI-Interaktion'},
+    {'left': ['innovativ'], 'right': ['standard'], 'stimuli': ['innovativ', 'standard'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Ergebnisqualität'},
+    {'left': ['sparring', 'innovativ'], 'right': ['auftrag', 'standard'], 'stimuli': ['sparring', 'innovativ', 'auftrag', 'standard'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 1 (Übung)'},
+    {'left': ['sparring', 'innovativ'], 'right': ['auftrag', 'standard'], 'stimuli': ['sparring', 'innovativ', 'auftrag', 'standard'], 'trials': 40, 'is_critical': True, 'name': 'Test: Sparringspartner + Innovativ'},
+    {'left': ['auftrag'], 'right': ['sparring'], 'stimuli': ['sparring', 'auftrag'], 'trials': 20, 'is_practice': True, 'name': 'Umgewöhnung: KI-Interaktion'},
+    {'left': ['auftrag', 'innovativ'], 'right': ['sparring', 'standard'], 'stimuli': ['sparring', 'innovativ', 'auftrag', 'standard'], 'trials': 20, 'is_practice': True, 'name': 'Kombination 2 (Übung)'},
+    {'left': ['auftrag', 'innovativ'], 'right': ['sparring', 'standard'], 'stimuli': ['sparring', 'innovativ', 'auftrag', 'standard'], 'trials': 40, 'is_critical': True, 'name': 'Test: Auftraggeber + Innovativ'}
 ]
 
 # --- 3. Funktionen zur Steuerung des Tests (Unverändert) ---
@@ -131,7 +131,6 @@ def show_footer():
         </div>""", unsafe_allow_html=True)
 
 def jump_to_end_for_debug():
-    # Angepasste Debug-Daten für die neue Logik
     st.session_state.results = [
         {'block': 4, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 650 + random.randint(-50, 50)},
         {'block': 4, 'is_critical': True, 'stimulus': 'Debug', 'correct': True, 'rt': 750 + random.randint(-50, 50)},
@@ -142,12 +141,12 @@ def jump_to_end_for_debug():
 
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
-    st.markdown("<h2 style='color: #555; margin-bottom: 2rem;'>Agile Kognition: Perfekter Plan vs. Lernendes Experiment</h2>", unsafe_allow_html=True)
-    st.info("**Willkommen!** Entdecken Sie Ihre unbewusste Haltung zu Arbeitsprozessen und Unsicherheit.", icon="💡")
+    st.markdown("<h2 style='color: #555; margin-bottom: 2rem;'>Kreative Kognition: KI als Sparringspartner vs. Auftraggeber</h2>", unsafe_allow_html=True)
+    st.info("**Willkommen!** Finden Sie heraus, wie Sie unbewusst mit Künstlicher Intelligenz interagieren.", icon="💡")
     
     st.markdown("""<div class="card">
         <h4>🧠 Worum geht es hier?</h4>
-        <p>In traditionellen Projekten dominiert oft das Ziel, einen perfekten Plan fehlerfrei umzusetzen. Ein agiles Mindset hingegen begreift Projekte als Experimente, bei denen durch Ausprobieren und Feedback gelernt wird. Dieser Test misst, ob Ihre unbewusste Reaktion auf Projekte eher von der Angst vor Planabweichung (Kontrolle) oder der Freude am Lernen (Entdeckung) geprägt ist.</p>
+        <p>Dieser Test misst, ob die Interaktion mit KI implizit als kreativer Dialog (Sparring) oder als transaktionale Anweisung (Auftrag) wahrgenommen wird. Der "Aha-Moment" entsteht, wenn Sie erkennen, dass nicht die KI allein, sondern Ihre eigene, unbewusste Interaktionsweise die Qualität des Ergebnisses bestimmt: Ist die KI ein Werkzeug, dem man Aufträge erteilt, oder ein Partner, den man im Dialog zu besseren Ideen herausfordert?</p>
     </div>""", unsafe_allow_html=True)
     
     st.markdown("""<div class="card">
@@ -221,12 +220,12 @@ def get_iat_effect_visualization_html(iat_effect):
     bar_class = "positive" if iat_effect >= 0 else "negative"
     
     return f"""<div style="font-size: 0.9rem; display: flex; justify-content: space-between; color: #555;">
-            <span>Fokus auf <b>Plan & Kontrolle</b></span>
-            <span>Fokus auf <b>Experiment & Entdeckung</b></span>
+            <span>Fokus auf <b>Auftrag & Standard</b></span>
+            <span>Fokus auf <b>Sparring & Innovativ</b></span>
         </div>
         <div class="iat-result-bar-container">
             <div class="iat-result-center-line"></div>
-            <div class="iat-result-bar {bar_class}" style="width: {bar_width}%;"></div>
+            <div class.="iat-result-bar {bar_class}" style="width: {bar_width}%;"></div>
         </div>"""
 
 def calculate_and_show_results():
@@ -235,9 +234,9 @@ def calculate_and_show_results():
     critical_trials = df[df['is_critical'] & df['correct']]
 
     try:
-        # Block 4 ist die "kongruente" Paarung für ein agiles Mindset: Experiment + Entdeckung
+        # Block 4 ist die "kongruente" Paarung für ein kollaboratives KI-Mindset: Sparringspartner + Innovativ
         avg_rt_block4 = critical_trials[critical_trials['block'] == 4]['rt'].mean()
-        # Block 7 ist die "inkongruente" Paarung: Experiment + Kontrolle
+        # Block 7 ist die "inkongruente" Paarung: Sparringspartner + Standard
         avg_rt_block7 = critical_trials[critical_trials['block'] == 7]['rt'].mean()
 
         if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7): raise ValueError("Nicht genügend Daten.")
@@ -246,11 +245,11 @@ def calculate_and_show_results():
         
         interpretation_html = ""
         if iat_effect > 50:
-            interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Agil-fokussiertes Mindset:</b> Sie assoziieren 'Lernendes Experiment' implizit stärker mit <b>'Entdeckung'</b>. Dies deutet auf eine Denkweise hin, die Unsicherheit als Chance zum Lernen begreift und Flexibilität schätzt – eine wichtige Grundlage für agiles Arbeiten und Innovation.</div>"
+            interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Kollaboratives KI-Mindset:</b> Sie assoziieren 'KI als Sparringspartner' implizit stärker mit <b>'Innovativ'</b>. Dies deutet auf eine Denkweise hin, die KI als kreativen Partner im Dialog sieht, um neuartige Lösungen zu entwickeln und Ideen zu verfeinern.</div>"
         elif iat_effect < -50:
-            interpretation_html = "<div style='background-color: #fff3cd; color: #856404; padding: 1rem; border-radius: 8px;'><b>Planungs-fokussiertes Mindset:</b> Sie assoziieren 'Lernendes Experiment' implizit stärker mit <b>'Kontrolle'</b>. Dies deutet auf eine Denkweise hin, die großen Wert auf Planbarkeit, Effizienz und Stabilität legt. Dieses Bedürfnis nach Sicherheit ist entscheidend für verlässliche Ergebnisse in vorhersagbaren Umfeldern.</div>"
+            interpretation_html = "<div style='background-color: #fff3cd; color: #856404; padding: 1rem; border-radius: 8px;'><b>Delegations-fokussiertes KI-Mindset:</b> Sie assoziieren 'KI als Auftraggeber' implizit stärker mit <b>'Standard'</b>. Dies deutet auf eine Denkweise hin, die KI als hoch-effizientes Werkzeug zur Erledigung klar definierter Aufgaben und zur Automatisierung von Routinen schätzt.</div>"
         else:
-            interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Pragmatisches Mindset:</b> Ihre impliziten Assoziationen sind weitgehend ausgeglichen. Dies deutet auf eine situative und pragmatische Herangehensweise hin. Sie können je nach Projektkontext sowohl den Wert von Stabilität und Planung als auch die Notwendigkeit von Flexibilität und Lernen erkennen.</div>"
+            interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Flexibles KI-Mindset:</b> Ihre impliziten Assoziationen sind weitgehend ausgeglichen. Dies deutet auf eine pragmatische Herangehensweise hin. Sie nutzen KI je nach Anforderung als effizientes Werkzeug für Standardaufgaben oder als kreativen Partner für innovative Ideen.</div>"
 
         viz_html = get_iat_effect_visualization_html(iat_effect)
 
@@ -263,13 +262,13 @@ def calculate_and_show_results():
         st.markdown(f"""<div class="card">
             <h4>⏱️ Detailauswertung</h4>
             <div class="metrics-container">
-                <div class="metric-col"><div class="metric-label">Ø Zeit (Experiment + Entdeckung)</div><div class="metric-value">{avg_rt_block4:.0f} ms</div></div>
-                <div class="metric-col"><div class="metric-label">Ø Zeit (Experiment + Kontrolle)</div><div class="metric-value">{avg_rt_block7:.0f} ms</div></div>
+                <div class="metric-col"><div class="metric-label">Ø Zeit (Sparring + Innovativ)</div><div class="metric-value">{avg_rt_block4:.0f} ms</div></div>
+                <div class="metric-col"><div class="metric-label">Ø Zeit (Sparring + Standard)</div><div class="metric-value">{avg_rt_block7:.0f} ms</div></div>
                 <div class="metric-col"><div class="metric-label">IAT-Effekt (Differenz)</div><div class="metric-value">{iat_effect:.0f} ms</div></div>
             </div>
             <hr>
             <p><b>Wie kommt das Ergebnis zustande?</b><br>
-            Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block, der "Lernendes Experiment" mit "Kontrolle" kombiniert, mehr Zeit zur Zuordnung benötigt haben. Ihr Gehirn verarbeitet schneller, was es als zusammengehörig empfindet. Dies deutet auf eine stärkere unbewusste Verbindung zwischen "Experiment" und "Entdeckung" hin.</p>
+            Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block, der "KI als Sparringspartner" mit "Standard" kombiniert, mehr Zeit zur Zuordnung benötigt haben. Ihr Gehirn verarbeitet schneller, was es als zusammengehörig empfindet. Dies deutet auf eine stärkere unbewusste Verbindung zwischen "Sparringspartner" und "Innovativ" hin.</p>
             <p style="margin-top: 1rem;"><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen. Es ist keine Bewertung Ihrer Person oder Ihrer fachlichen Kompetenz, sondern ein Impuls zur Selbstreflexion.</p>
         </div>""", unsafe_allow_html=True)
 
@@ -285,7 +284,7 @@ def calculate_and_show_results():
 
 
 # --- 5. Hauptlogik der Streamlit App (Unverändert) ---
-st.set_page_config(layout="centered", page_title="IAT Agile Kognition")
+st.set_page_config(layout="centered", page_title="IAT Kreative Kognition")
 load_css()
 initialize_state()
 
