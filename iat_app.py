@@ -2,9 +2,9 @@ import streamlit as st
 import random
 import time
 import pandas as pd
-from streamlit_shortcuts import shortcut_button
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
+# (Dieser Teil bleibt unverändert)
 STIMULI = {
     'canonical': ['Trainings durchführen', 'Vorträge erstellen', 'Folien bearbeiten', 'Wissen teilen', 'Präsentation', 'Grafiken präsentieren', 'Verkaufspräsentation', 'Folien erstellen'],
     'non_affordance': ['Datenverschlüsselung', 'Spiele herunterladen', 'Instant Messaging', 'Im Internet surfen', 'Dateien wiederherstellen', 'Musik streamen', 'Online bezahlen', 'Virenscan'],
@@ -19,6 +19,7 @@ CATEGORIES = {
 }
 
 # --- 2. Definition der 7 Testblöcke ---
+# (Dieser Teil bleibt unverändert)
 IAT_BLOCKS = [
     {'left': ['canonical'], 'right': ['non_affordance'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
     {'left': ['useful'], 'right': ['useless'], 'stimuli': ['useful', 'useless'], 'trials': 20, 'is_practice': True},
@@ -107,7 +108,7 @@ initialize_state()
 
 if st.session_state.test_phase == 'start':
     st.title("IAT-Demonstration: PowerPoint-Wahrnehmung")
-    st.markdown("Ihre Aufgabe: Ordnen Sie die Begriffe, die in der Mitte erscheinen, so schnell wie möglich zu, indem Sie die Tasten 'E' (links) und 'I' (rechts) drücken.")
+    st.markdown("Ihre Aufgabe: Ordnen Sie die Begriffe, die in der Mitte erscheinen, so schnell wie möglich zu, indem Sie auf den entsprechenden Button klicken ('E' für links, 'I' für rechts).")
     if st.button("Test starten", use_container_width=True):
         st.session_state.test_phase = 'break'
         prepare_block(0)
@@ -135,17 +136,13 @@ elif st.session_state.test_phase == 'testing':
     if st.session_state.show_feedback:
         st.markdown('<p style="color:red; font-size: 40px; text-align: center;">X</p>', unsafe_allow_html=True)
 
+    # === GEÄNDERTE LOGIK: Standard st.button mit on_click Callback ===
+    # Diese Methode ist die stabilste in Streamlit.
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        # KORRIGIERT: Der Key wird mit dem Trial-Index einzigartig gemacht
-        if shortcut_button(label="E", shortcut='e', use_container_width=True, key=f'button_e_{st.session_state.current_trial}'):
-            record_response('e')
-            st.rerun()
+        st.button("E", on_click=record_response, args=('e',), use_container_width=True, key=f'button_e_{st.session_state.current_trial}')
     with col_btn2:
-        # KORRIGIERT: Der Key wird mit dem Trial-Index einzigartig gemacht
-        if shortcut_button(label="I", shortcut='i', use_container_width=True, key=f'button_i_{st.session_state.current_trial}'):
-            record_response('i')
-            st.rerun()
+        st.button("I", on_click=record_response, args=('i',), use_container_width=True, key=f'button_i_{st.session_state.current_trial}')
             
     if st.session_state.start_time == 0 and not st.session_state.show_feedback:
         st.session_state.start_time = time.time()
