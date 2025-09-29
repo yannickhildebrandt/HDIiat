@@ -109,20 +109,15 @@ initialize_state()
 
 if st.session_state.test_phase == 'start':
     st.title("IAT-Demonstration: PowerPoint-Wahrnehmung")
-    st.markdown("Ihre Aufgabe: Ordnen Sie die Begriffe, die in der Mitte erscheinen, so schnell wie möglich zu, indem Sie auf den entsprechenden Button klicken ('E' für links, 'I' für rechts).")
+    st.markdown("Ihre Aufgabe: Ordnen Sie die Begriffe, die in der Mitte erscheinen, so schnell wie möglich zu, indem Sie auf den entsprechenden Button klicken.")
     if st.button("Test starten", use_container_width=True):
         st.session_state.test_phase = 'break'
-        # Bereite hier schon den ersten Block vor
         prepare_block(0)
         st.rerun()
 
 elif st.session_state.test_phase == 'break':
     st.header(f"Block {st.session_state.current_block + 1} von {len(IAT_BLOCKS)} beginnt...")
-    
-    # === DIE ENTSCHEIDENDE KORREKTUR ===
-    # Hier wird der nächste Block vorbereitet und der Trial-Zähler zurückgesetzt.
     prepare_block(st.session_state.current_block)
-
     time.sleep(2)
     st.session_state.test_phase = 'testing'
     st.rerun()
@@ -131,12 +126,11 @@ elif st.session_state.test_phase == 'testing':
     block_config = IAT_BLOCKS[st.session_state.current_block]
     current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
     
-    left_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['left']])
-    right_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['right']])
+    # NEU: Erstelle die Beschriftungen für die Buttons mit Zeilenumbrüchen
+    left_button_label = "\n/\n".join([CATEGORIES[cat] for cat in block_config['left']])
+    right_button_label = "\n/\n".join([CATEGORIES[cat] for cat in block_config['right']])
 
-    col1, col2 = st.columns(2)
-    with col1: st.markdown(f'<p style="color:green; font-size: 20px;">{left_cat_text}</p>', unsafe_allow_html=True)
-    with col2: st.markdown(f'<p style="color:blue; font-size: 20px; text-align: right;">{right_cat_text}</p>', unsafe_allow_html=True)
+    # ENTFERNT: Die alten Markdown-Titel oben werden nicht mehr benötigt.
     
     st.markdown(f'<div style="text-align: center; font-size: 32px; font-weight: bold; padding: 50px 0;">{current_stimulus["text"]}</div>', unsafe_allow_html=True)
     
@@ -145,9 +139,10 @@ elif st.session_state.test_phase == 'testing':
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        st.button("E", on_click=record_response, args=('e',), use_container_width=True, key=f'button_e_{st.session_state.current_trial}')
+        # NEU: Buttons mit den vollständigen Kategorie-Labels erstellen
+        st.button(left_button_label, on_click=record_response, args=('e',), use_container_width=True, key=f'button_e_{st.session_state.current_trial}')
     with col_btn2:
-        st.button("I", on_click=record_response, args=('i',), use_container_width=True, key=f'button_i_{st.session_state.current_trial}')
+        st.button(right_button_label, on_click=record_response, args=('i',), use_container_width=True, key=f'button_i_{st.session_state.current_trial}')
             
     if st.session_state.start_time == 0:
         st.session_state.start_time = time.time()
