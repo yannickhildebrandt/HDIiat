@@ -83,13 +83,12 @@ def record_response(key_pressed):
     else:
         st.session_state.show_feedback = True
 
-# --- 4. UI-Komponenten und Styling (STARK ERWEITERT) ---
+# --- 4. UI-Komponenten und Styling ---
 
 def load_css():
-    """Lädt stark erweitertes CSS für Animationen, Cards und ein modernes UI."""
+    """Lädt CSS für Animationen, Cards und ein modernes UI."""
     st.markdown(f"""
     <style>
-        /* --- GRUNDLAGEN & ANIMATIONEN --- */
         @keyframes fadeIn {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
         @keyframes slideInUp {{ from {{ transform: translateY(20px); opacity: 0; }} to {{ transform: translateY(0); opacity: 1; }} }}
         @keyframes shake {{
@@ -97,76 +96,42 @@ def load_css():
             10%, 30%, 50%, 70%, 90% {{ transform: translateX(-5px); }}
             20%, 40%, 60%, 80% {{ transform: translateX(5px); }}
         }}
-
         .fade-in {{ animation: fadeIn 0.5s ease-in-out; }}
         .slide-in-up {{ animation: slideInUp 0.5s ease-out; }}
-        
-        /* --- GLOBALE STYLES --- */
         .stApp {{ background-color: {HDI_LIGHT_GRAY}; }}
         .stApp, .stMarkdown, h1, h2, h3, h4, h5, h6 {{ color: {HDI_DARK_GRAY}; }}
         h1, h2, h3 {{ animation: fadeIn 0.5s ease-in, slideInUp 0.5s ease-out; }}
-
-        /* --- CARD-DESIGN --- */
         .card {{
-            background-color: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
-            margin-bottom: 1.5rem;
+            background-color: white; padding: 2rem; border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-top: 1.5rem;
             animation: fadeIn 0.5s ease-in-out;
         }}
-
-        /* --- BUTTON-STYLES --- */
         .stButton>button {{
             background-image: linear-gradient(to right, {HDI_GREEN} 0%, #009a6e 51%, {HDI_GREEN} 100%);
-            color: white;
-            border-radius: 10px;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: none;
-            transition: 0.5s;
-            background-size: 200% auto;
+            color: white; border-radius: 10px; padding: 15px 30px; font-size: 1.2rem;
+            font-weight: bold; border: none; transition: 0.5s; background-size: 200% auto;
             box-shadow: 0 4px 10px rgba(0, 122, 82, 0.3);
         }}
         .stButton>button:hover {{
-            background-position: right center;
-            color: white;
-            transform: translateY(-2px);
+            background-position: right center; color: white; transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(0, 122, 82, 0.4);
         }}
         .stButton>button[kind="secondary"] {{
-            height: 180px;
-            white-space: pre-wrap;
-            font-size: 1.3rem;
-            background: white;
-            color: {HDI_DARK_GRAY};
-            border: 2px solid #ddd;
-            box-shadow: none;
+            height: 180px; white-space: pre-wrap; font-size: 1.3rem; background: white;
+            color: {HDI_DARK_GRAY}; border: 2px solid #ddd; box-shadow: none;
         }}
         .stButton>button[kind="secondary"]:hover {{
-            border-color: {HDI_GREEN};
-            background-color: #f9f9f9;
-            transform: translateY(-2px);
+            border-color: {HDI_GREEN}; background-color: #f9f9f9; transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }}
-        
-        /* --- TEST-INTERFACE --- */
         .stimulus-container.incorrect .stimulus-text {{
-            color: {HDI_RED};
-            animation: shake 0.5s ease-in-out;
+            color: {HDI_RED}; animation: shake 0.5s ease-in-out;
         }}
         .stimulus-text {{
-            text-align: center;
-            font-size: 3rem;
-            font-weight: bold;
-            padding: 60px 0;
-            color: {HDI_GREEN};
-            animation: fadeIn 0.3s ease;
+            text-align: center; font-size: 3rem; font-weight: bold; padding: 60px 0;
+            color: {HDI_GREEN}; animation: fadeIn 0.3s ease;
         }}
         .feedback-x {{ color: {HDI_RED}; font-size: 2.5rem; text-align: center; font-weight: bold; height: 40px; }}
-
-        /* --- ERGEBNIS-VISUALISIERUNG --- */
         .iat-result-bar-container {{
             width: 100%; background-color: #e9ecef; border-radius: 10px; height: 30px;
             position: relative; margin: 1rem 0;
@@ -184,36 +149,49 @@ def load_css():
     </style>
     """, unsafe_allow_html=True)
 
+def show_footer():
+    """Zeigt den Footer mit Attribution an."""
+    st.write("")
+    st.markdown("---")
+    st.markdown(
+        """
+        <div style='text-align: center; color: #888; font-size: 0.9rem;'>
+        Ein Tool von <b>Eggers & Partner Consulting</b><br>
+        entwickelt von <i>Dr. Yannick Hildebrandt</i>
+        </div>
+        """, unsafe_allow_html=True)
+
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
     st.markdown("<h2 style='text-align:center; color: #555;'>Ihre unbewusste Einstellung zu PowerPoint</h2>", unsafe_allow_html=True)
-    st.write("") # Abstand
+    st.info("**Willkommen!** Dieser interaktive Test ist Teil des HDI-Workshops zum Thema **'Digitales Mindset'**.", icon="💡")
 
-    with st.container():
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown("#### 🧠 Was ist ein Impliziter Assoziationstest?")
-        st.markdown("""
-        Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.
-        """)
-        st.markdown("</div>", unsafe_allow_html=True)
+    # BUGFIX: Die 'with st.container()' Blöcke wurden entfernt, um die leeren Kästen zu vermeiden.
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("#### 🧠 Was ist ein Impliziter Assoziationstest?")
+    st.markdown("""
+    Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.
+    """)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    with st.container():
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown("#### 🎯 Ihre Aufgabe")
-        st.markdown("""
-        1.  **Kategorien beachten:** Links und rechts werden Kategorien angezeigt.
-        2.  **Begriff in der Mitte:** Ein Wort erscheint in der Mitte.
-        3.  **Schnell zuordnen:** Klicken Sie so schnell und genau wie möglich auf den Button der passenden Seite. Bei Fehlern erscheint ein rotes **X** – korrigieren Sie sich, um weiterzumachen.
-        
-        **Ziel ist Geschwindigkeit!** Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.
-        """)
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("#### 🎯 Ihre Aufgabe")
+    st.markdown("""
+    1.  **Kategorien beachten:** Links und rechts werden Kategorien angezeigt.
+    2.  **Begriff in der Mitte:** Ein Wort erscheint in der Mitte.
+    3.  **Schnell zuordnen:** Klicken Sie so schnell und genau wie möglich auf den Button der passenden Seite. Bei Fehlern erscheint ein rotes **X** – korrigieren Sie sich, um weiterzumachen.
+    
+    **Ziel ist Geschwindigkeit!** Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.
+    """)
+    st.markdown("</div>", unsafe_allow_html=True)
     
     st.write("")
     if st.button("Ich bin bereit, den Test zu starten!", use_container_width=True):
         st.session_state.test_phase = 'break'
         prepare_block(0)
         st.rerun()
+        
+    show_footer()
 
 def show_break_screen():
     block_config = IAT_BLOCKS[st.session_state.current_block]
@@ -235,10 +213,8 @@ def show_testing_interface():
     current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
     left_label = "\noder\n".join([CATEGORIES[cat] for cat in block_config['left']])
     right_label = "\noder\n".join([CATEGORIES[cat] for cat in block_config['right']])
-
-    # Container für Shake-Animation bei Fehler
+    
     feedback_class = "incorrect" if st.session_state.show_feedback else ""
-    # Einzigartiger Key für Re-Animation bei jedem Trial
     stimulus_key = f"stimulus-{st.session_state.current_block}-{st.session_state.current_trial}"
     
     st.markdown(f'<div class="stimulus-container {feedback_class}" key="{stimulus_key}"><div class="stimulus-text">{current_stimulus["text"]}</div></div>', unsafe_allow_html=True)
@@ -259,11 +235,9 @@ def show_testing_interface():
         time.sleep(0.01)
 
 def display_iat_effect_visualization(iat_effect):
-    # Skaliert den Effekt für die Visualisierung. Max-Effekt von 500ms füllt 50% der Leiste.
     max_effect_for_scale = 500 
     normalized_effect = max(min(iat_effect, max_effect_for_scale), -max_effect_for_scale)
     bar_width = abs(normalized_effect / max_effect_for_scale) * 50
-
     bar_class = "positive" if iat_effect >= 0 else "negative"
     
     st.markdown(f"""
@@ -295,7 +269,6 @@ def calculate_and_show_results():
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("Ihre implizite Neigung auf einen Blick")
 
-        # Interpretationstext
         if iat_effect > 50:
             st.success(f"**Positive Tendenz:** Sie assoziieren 'PowerPoint-Anwendung' implizit eher mit **'Nützlich'**.")
         elif iat_effect < -50:
@@ -303,7 +276,6 @@ def calculate_and_show_results():
         else:
             st.info("**Neutrale Tendenz:** Ihre impliziten Assoziationen sind weitgehend ausgeglichen.")
         
-        # Die neue visuelle Darstellung
         display_iat_effect_visualization(iat_effect)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -338,6 +310,8 @@ def calculate_and_show_results():
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
+        
+    show_footer()
 
 # --- 5. Hauptlogik der Streamlit App ---
 
