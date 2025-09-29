@@ -106,6 +106,7 @@ def load_css():
             box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-top: 1.5rem;
             animation: fadeIn 0.5s ease-in-out;
         }}
+        .card p {{ margin-bottom: 0; }} /* Korrigiert Abstandsprobleme in Karten */
         .stButton>button {{
             background-image: linear-gradient(to right, {HDI_GREEN} 0%, #009a6e 51%, {HDI_GREEN} 100%);
             color: white; border-radius: 10px; padding: 15px 30px; font-size: 1.2rem;
@@ -166,24 +167,26 @@ def show_start_page():
     st.markdown("<h2 style='text-align:center; color: #555;'>Ihre unbewusste Einstellung zu PowerPoint</h2>", unsafe_allow_html=True)
     st.info("**Willkommen!** Dieser interaktive Test ist Teil des HDI-Workshops zum Thema **'Digitales Mindset'**.", icon="💡")
 
-    # BUGFIX: Die 'with st.container()' Blöcke wurden entfernt, um die leeren Kästen zu vermeiden.
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("#### 🧠 Was ist ein Impliziter Assoziationstest?")
+    # KORREKTUR: Der gesamte Inhalt der Karte ist jetzt in einem einzigen Markdown-Befehl.
     st.markdown("""
-    Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.
-    """)
-    st.markdown("</div>", unsafe_allow_html=True)
+    <div class="card">
+        <h4>🧠 Was ist ein Impliziter Assoziationstest?</h4>
+        <p>Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("#### 🎯 Ihre Aufgabe")
+    # KORREKTUR: Auch hier ist der gesamte Inhalt in einem einzigen Markdown-Befehl.
     st.markdown("""
-    1.  **Kategorien beachten:** Links und rechts werden Kategorien angezeigt.
-    2.  **Begriff in der Mitte:** Ein Wort erscheint in der Mitte.
-    3.  **Schnell zuordnen:** Klicken Sie so schnell und genau wie möglich auf den Button der passenden Seite. Bei Fehlern erscheint ein rotes **X** – korrigieren Sie sich, um weiterzumachen.
-    
-    **Ziel ist Geschwindigkeit!** Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.
-    """)
-    st.markdown("</div>", unsafe_allow_html=True)
+    <div class="card">
+        <h4>🎯 Ihre Aufgabe</h4>
+        <ol style="padding-left: 20px; margin-bottom: 1rem;">
+            <li><b>Kategorien beachten:</b> Links und rechts werden Kategorien angezeigt.</li>
+            <li><b>Begriff in der Mitte:</b> Ein Wort erscheint in der Mitte.</li>
+            <li><b>Schnell zuordnen:</b> Klicken Sie so schnell und genau wie möglich auf den Button der passenden Seite. Bei Fehlern erscheint ein rotes <b>X</b> – korrigieren Sie sich, um weiterzumachen.</li>
+        </ol>
+        <p><b>Ziel ist Geschwindigkeit!</b> Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.write("")
     if st.button("Ich bin bereit, den Test zu starten!", use_container_width=True):
@@ -290,12 +293,10 @@ def calculate_and_show_results():
             st.metric(label="IAT-Effekt (Differenz)", value=f"{iat_effect:.0f} ms", delta=f"{iat_effect:.0f} ms", delta_color="inverse")
         
         st.markdown("""
-        **Wie kommt das Ergebnis zustande?**
-        - Ein **positiver IAT-Effekt** (wie bei Ihnen) bedeutet, dass Sie im Block "PP + Nutzlos" langsamer waren. Ihr Gehirn brauchte mehr Zeit, um diese "unpassende" Kombination zu verarbeiten.
-        - Ein **negativer Effekt** würde das Gegenteil bedeuten.
-        
-        **Wichtiger Hinweis:** Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung.
-        """)
+        <p><b>Wie kommt das Ergebnis zustande?</b><br>
+        Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block "PP + Nutzlos" langsamer waren. Ihr Gehirn brauchte mehr Zeit, um diese "unpassende" Kombination zu verarbeiten. Ein <b>negativer Effekt</b> würde das Gegenteil bedeuten.</p>
+        <p><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung.</p>
+        """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
         
         with st.expander("Rohdaten der Messung anzeigen"):
