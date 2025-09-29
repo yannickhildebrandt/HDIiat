@@ -9,7 +9,7 @@ HDI_DARK_GRAY = "#333333"
 HDI_LIGHT_GRAY = "#f5f5f5"
 HDI_RED = "#d9534f"
 
-# --- 1. Konfiguration des Tests: Kategorien und Stimuli (NEUES THEMA) ---
+# --- 1. Konfiguration des Tests: Kategorien und Stimuli ---
 STIMULI = {
     'rohstoff': ['KI-Training', 'Risikoprognose', 'Kundenprofil', 'Betrugserkennung', 'Personalisierung', 'Vorausschau'],
     'beleg': ['Schadensakte', 'Quartalsbericht', 'Kundenhistorie', 'Protokoll', 'Dokumentation', 'Nachweis'],
@@ -24,9 +24,6 @@ CATEGORIES = {
     'vergangenheit': 'Vergangenheit'
 }
 
-# Die Logik der Blöcke bleibt gleich, nur die Inhalte werden ausgetauscht.
-# Block 4 testet die Assoziation: (Rohstoff + Zukunft)
-# Block 7 testet die Assoziation: (Rohstoff + Vergangenheit)
 IAT_BLOCKS = [
     {'left': ['rohstoff'], 'right': ['beleg'], 'stimuli': ['rohstoff', 'beleg'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Daten-Typ'},
     {'left': ['zukunft'], 'right': ['vergangenheit'], 'stimuli': ['zukunft', 'vergangenheit'], 'trials': 20, 'is_practice': True, 'name': 'Kategorisierung: Zeitbezug'},
@@ -37,7 +34,7 @@ IAT_BLOCKS = [
     {'left': ['beleg', 'zukunft'], 'right': ['rohstoff', 'vergangenheit'], 'stimuli': ['rohstoff', 'zukunft', 'beleg', 'vergangenheit'], 'trials': 40, 'is_critical': True, 'name': 'Test: Beleg + Zukunft'}
 ]
 
-# --- 3. Funktionen zur Steuerung des Tests (Keine Änderungen nötig) ---
+# --- 3. Funktionen zur Steuerung des Tests (Unverändert) ---
 def initialize_state():
     if 'test_phase' not in st.session_state:
         st.session_state.test_phase = 'start'
@@ -118,6 +115,8 @@ def load_css():
         .metric-col {{ flex: 1; padding: 0 10px; }}
         .metric-label {{ font-size: 0.9rem; color: #555; }}
         .metric-value {{ font-size: 1.8rem; font-weight: bold; color: {HDI_DARK_GRAY}; }}
+        /* NEU: CSS Regel zur Behebung des visuellen Bugs */
+        .stAlert {{ margin-top: 1.5rem; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -140,9 +139,11 @@ def jump_to_end_for_debug():
 
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
-    st.markdown("<h2 style='text-align:center; color: #555;'>Digitale Kognition: Daten als Rohstoff vs. Beleg</h2>", unsafe_allow_html=True)
+    # GEÄNDERT: Abstand nach unten hinzugefügt, um den Bug zu beheben
+    st.markdown("<h2 style='text-align:center; color: #555; margin-bottom: 2rem;'>Digitale Kognition: Daten als Rohstoff vs. Beleg</h2>", unsafe_allow_html=True)
     st.info("**Willkommen!** Finden Sie Ihre unbewusste Grundhaltung gegenüber Daten heraus.", icon="💡")
     
+    # GEÄNDERT: Icon wieder hinzugefügt
     st.markdown("""<div class="card">
         <h4>🧠 Worum geht es hier?</h4>
         <p>Dieser Test misst die unbewusste Grundhaltung gegenüber Daten. Im Versicherungsalltag sind Daten oft mit Dokumentationspflicht und Nachweisbarkeit verbunden ("Ist das revisionssicher?"). Ein digitales Mindset sieht in denselben Daten jedoch den Treibstoff für KI-Modelle, die zukünftige Risiken prognostizieren und neue Produkte ermöglichen. Der "Aha-Moment" entsteht, wenn Sie erkennen, ob Sie Daten implizit als administrative Last (Vergangenheit) oder als strategischen Rohstoff (Zukunft) wahrnehmen.</p>
@@ -218,9 +219,10 @@ def get_iat_effect_visualization_html(iat_effect):
     bar_width = abs(normalized_effect / max_effect_for_scale) * 50
     bar_class = "positive" if iat_effect >= 0 else "negative"
     
+    # GEÄNDERT: Beschriftungen für eine wertfreie Darstellung angepasst
     return f"""<div style="font-size: 0.9rem; display: flex; justify-content: space-between; color: #555;">
-            <span>Assoziation mit <b>Vergangenheit</b></span>
-            <span>Assoziation mit <b>Zukunft</b></span>
+            <span>Fokus auf <b>Qualität & Beleg</b></span>
+            <span>Fokus auf <b>Potenzial & Zukunft</b></span>
         </div>
         <div class="iat-result-bar-container">
             <div class="iat-result-center-line"></div>
@@ -233,23 +235,21 @@ def calculate_and_show_results():
     critical_trials = df[df['is_critical'] & df['correct']]
 
     try:
-        # Block 4 ist die "kongruente" Paarung für ein zukunftsorientiertes Mindset: Rohstoff + Zukunft
         avg_rt_block4 = critical_trials[critical_trials['block'] == 4]['rt'].mean()
-        # Block 7 ist die "inkongruente" Paarung: Rohstoff + Vergangenheit
         avg_rt_block7 = critical_trials[critical_trials['block'] == 7]['rt'].mean()
 
         if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7): raise ValueError("Nicht genügend Daten.")
 
-        # Ein positiver Effekt bedeutet, dass Block 7 (inkongruent) länger gedauert hat als Block 4 (kongruent)
         iat_effect = avg_rt_block7 - avg_rt_block4
         
+        # GEÄNDERT: Vollständig neue, wertfreie und konstruktive Interpretationen
         interpretation_html = ""
         if iat_effect > 50:
-            interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Zukunftsorientierte Tendenz:</b> Sie assoziieren 'Daten als Rohstoff' implizit stärker mit <b>'Zukunft'</b>. Dies deutet auf ein Mindset hin, das Daten als strategische Ressource für Innovationen sieht.</div>"
+            interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Potenzial-fokussiertes Mindset:</b> Sie assoziieren 'Daten als Rohstoff' implizit stärker mit <b>'Zukunft'</b>. Dies deutet auf eine Denkweise hin, die in Daten vor allem das Potenzial für Neues und Zukünftiges sieht – eine wichtige Grundlage für Innovation und strategische Entwicklung.</div>"
         elif iat_effect < -50:
-            interpretation_html = "<div style='background-color: #fff3cd; color: #856404; padding: 1rem; border-radius: 8px;'><b>Vergangenheitsorientierte Tendenz:</b> Sie assoziieren 'Daten als Rohstoff' implizit stärker mit <b>'Vergangenheit'</b>. Dies kann auf eine Sichtweise hindeuten, die Daten primär als Dokumentation oder administrative Notwendigkeit betrachtet.</div>"
+            interpretation_html = "<div style='background-color: #fff3cd; color: #856404; padding: 1rem; border-radius: 8px;'><b>Qualitäts-fokussiertes Mindset:</b> Sie assoziieren 'Daten als Rohstoff' implizit stärker mit <b>'Vergangenheit'</b>. Dies deutet auf eine Denkweise hin, die großen Wert auf Datenqualität, Korrektheit und Nachweisbarkeit legt. Dieses stabile Fundament ist entscheidend für verlässliche Prozesse und revisionssicheres Arbeiten.</div>"
         else:
-            interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Neutrale Tendenz:</b> Ihre impliziten Assoziationen zwischen Daten und Zeitbezug sind weitgehend ausgeglichen.</div>"
+            interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Flexibles Mindset:</b> Ihre impliziten Assoziationen sind weitgehend ausgeglichen. Dies deutet auf einen pragmatischen und flexiblen Umgang mit Daten hin. Sie können je nach Kontext sowohl die Notwendigkeit eines validen Belegs als auch das Potenzial für die Zukunft erkennen.</div>"
 
         viz_html = get_iat_effect_visualization_html(iat_effect)
 
@@ -267,9 +267,10 @@ def calculate_and_show_results():
                 <div class="metric-col"><div class="metric-label">IAT-Effekt (Differenz)</div><div class="metric-value">{iat_effect:.0f} ms</div></div>
             </div>
             <hr>
+            {/* GEÄNDERT: Erklärung wertfreier formuliert */}
             <p><b>Wie kommt das Ergebnis zustande?</b><br>
-            Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block, der "Daten als Rohstoff" mit "Vergangenheit" kombiniert, langsamer waren. Ihr Gehirn brauchte mehr Zeit, um diese für Sie "unpassende" Kombination zu verarbeiten. Dies deutet auf eine stärkere unbewusste Verbindung zwischen "Rohstoff" und "Zukunft" hin.</p>
-            <p style="margin-top: 1rem;"><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung oder Ihre fachliche Kompetenz.</p>
+            Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block, der "Daten als Rohstoff" mit "Vergangenheit" kombiniert, mehr Zeit zur Zuordnung benötigt haben. Ihr Gehirn verarbeitet schneller, was es als zusammengehörig empfindet. Dies deutet auf eine stärkere unbewusste Verbindung zwischen "Rohstoff" und "Zukunft" hin.</p>
+            <p style="margin-top: 1rem;"><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen. Es ist keine Bewertung Ihrer Person oder Ihrer fachlichen Kompetenz, sondern ein Impuls zur Selbstreflexion.</p>
         </div>""", unsafe_allow_html=True)
 
     except (KeyError, ZeroDivisionError, ValueError) as e:
@@ -283,7 +284,7 @@ def calculate_and_show_results():
     show_footer()
 
 
-# --- 5. Hauptlogik der Streamlit App (Keine Änderungen nötig) ---
+# --- 5. Hauptlogik der Streamlit App (Unverändert) ---
 st.set_page_config(layout="centered", page_title="IAT Digitale Kognition")
 load_css()
 initialize_state()
