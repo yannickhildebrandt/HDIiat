@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 import pandas as pd
-from streamlit_keyboard_events import keyboard_events # Wichtig: Die neue Komponente importieren
+from streamlit_keyup import st_keyup as keyboard_events # Wichtig: Die neue Komponente importieren
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
 STIMULI = {
