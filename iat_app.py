@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 import pandas as pd
-from streamlit_shortcuts import st_shortcuts # KORRIGIERTER IMPORT
+from streamlit_shortcuts import add_keyboard_shortcuts # KORRIGIERTER IMPORT
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
 STIMULI = {
