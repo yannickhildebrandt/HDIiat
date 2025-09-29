@@ -106,7 +106,7 @@ def load_css():
             box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-top: 1.5rem;
             animation: fadeIn 0.5s ease-in-out;
         }}
-        .card p {{ margin-bottom: 0; }} /* Korrigiert Abstandsprobleme in Karten */
+        .card p {{ margin-bottom: 0; }}
         .stButton>button {{
             background-image: linear-gradient(to right, {HDI_GREEN} 0%, #009a6e 51%, {HDI_GREEN} 100%);
             color: white; border-radius: 10px; padding: 15px 30px; font-size: 1.2rem;
@@ -125,28 +125,20 @@ def load_css():
             border-color: {HDI_GREEN}; background-color: #f9f9f9; transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }}
-        .stimulus-container.incorrect .stimulus-text {{
-            color: {HDI_RED}; animation: shake 0.5s ease-in-out;
-        }}
-        .stimulus-text {{
-            text-align: center; font-size: 3rem; font-weight: bold; padding: 60px 0;
-            color: {HDI_GREEN}; animation: fadeIn 0.3s ease;
-        }}
+        .stimulus-container.incorrect .stimulus-text {{ color: {HDI_RED}; animation: shake 0.5s ease-in-out; }}
+        .stimulus-text {{ text-align: center; font-size: 3rem; font-weight: bold; padding: 60px 0; color: {HDI_GREEN}; animation: fadeIn 0.3s ease; }}
         .feedback-x {{ color: {HDI_RED}; font-size: 2.5rem; text-align: center; font-weight: bold; height: 40px; }}
-        .iat-result-bar-container {{
-            width: 100%; background-color: #e9ecef; border-radius: 10px; height: 30px;
-            position: relative; margin: 1rem 0;
-        }}
-        .iat-result-bar {{
-            height: 100%; border-radius: 10px; position: absolute;
-            transition: width 1s ease-out, left 1s ease-out;
-        }}
+        .iat-result-bar-container {{ width: 100%; background-color: #e9ecef; border-radius: 10px; height: 30px; position: relative; margin-top: 1rem; }}
+        .iat-result-bar {{ height: 100%; border-radius: 10px; position: absolute; transition: width 1s ease-out, left 1s ease-out; }}
         .iat-result-bar.positive {{ background-color: {HDI_GREEN}; left: 50%; }}
         .iat-result-bar.negative {{ background-color: {HDI_RED}; right: 50%; }}
-        .iat-result-center-line {{
-            position: absolute; left: 50%; top: 0; bottom: 0;
-            border-left: 2px dashed #adb5bd;
-        }}
+        .iat-result-center-line {{ position: absolute; left: 50%; top: 0; bottom: 0; border-left: 2px dashed #adb5bd; }}
+        
+        /* NEU: CSS für nachgebaute Metriken */
+        .metrics-container {{ display: flex; justify-content: space-between; text-align: center; margin: 1.5rem 0; }}
+        .metric-col {{ flex: 1; padding: 0 10px; }}
+        .metric-label {{ font-size: 0.9rem; color: #555; }}
+        .metric-value {{ font-size: 1.8rem; font-weight: bold; color: {HDI_DARK_GRAY}; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -154,25 +146,20 @@ def show_footer():
     st.write("")
     st.markdown("---")
     st.markdown(
-        """
-        <div style='text-align: center; color: #888; font-size: 0.9rem;'>
+        """<div style='text-align: center; color: #888; font-size: 0.9rem;'>
         Ein Tool von <b>Eggers & Partner Consulting</b><br>
         entwickelt von <i>Dr. Yannick Hildebrandt</i>
-        </div>
-        """, unsafe_allow_html=True)
+        </div>""", unsafe_allow_html=True)
 
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
     st.markdown("<h2 style='text-align:center; color: #555;'>Ihre unbewusste Einstellung zu PowerPoint</h2>", unsafe_allow_html=True)
     st.info("**Willkommen!** Dieser interaktive Test ist Teil des HDI-Workshops zum Thema **'Digitales Mindset'**.", icon="💡")
-    st.markdown("""
-    <div class="card">
+    st.markdown("""<div class="card">
         <h4>🧠 Was ist ein Impliziter Assoziationstest?</h4>
         <p>Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    st.markdown("""
-    <div class="card">
+    </div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="card">
         <h4>🎯 Ihre Aufgabe</h4>
         <ol style="padding-left: 20px; margin-bottom: 1rem;">
             <li><b>Kategorien beachten:</b> Links und rechts werden Kategorien angezeigt.</li>
@@ -180,8 +167,7 @@ def show_start_page():
             <li><b>Schnell zuordnen:</b> Klicken Sie so schnell und genau wie möglich auf den Button der passenden Seite. Bei Fehlern erscheint ein rotes <b>X</b> – korrigieren Sie sich, um weiterzumachen.</li>
         </ol>
         <p><b>Ziel ist Geschwindigkeit!</b> Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    </div>""", unsafe_allow_html=True)
     st.write("")
     if st.button("Ich bin bereit, den Test zu starten!", use_container_width=True):
         st.session_state.test_phase = 'break'
@@ -190,29 +176,19 @@ def show_start_page():
     show_footer()
 
 def show_break_screen():
-    """Zeigt den Übergangsbildschirm mit einem visuellen Countdown an."""
     block_config = IAT_BLOCKS[st.session_state.current_block]
     progress_percent = (st.session_state.current_block) / len(IAT_BLOCKS)
-    
     st.header(f"Block {st.session_state.current_block + 1} von {len(IAT_BLOCKS)}")
     st.subheader(f"Thema: {block_config['name']}")
     st.progress(progress_percent, text=f"{int(progress_percent*100)}% abgeschlossen")
-    st.write("") # Abstand
-
-    # Platzhalter für den Countdown
+    st.write("")
     countdown_placeholder = st.empty()
-    
-    # Dauer des Countdowns in Sekunden
     BREAK_DURATION = 10
-
     for i in range(BREAK_DURATION, 0, -1):
         countdown_placeholder.markdown(f"<h1 style='text-align: center; font-size: 5rem; color: {HDI_GREEN};'>{i}</h1>", unsafe_allow_html=True)
         time.sleep(1)
-    
     countdown_placeholder.markdown(f"<h1 style='text-align: center; color: {HDI_GREEN};'>Los geht's!</h1>", unsafe_allow_html=True)
     time.sleep(1)
-
-    # Übergang zur nächsten Testphase
     st.session_state.test_phase = 'testing'
     prepare_block(st.session_state.current_block)
     st.rerun()
@@ -222,34 +198,24 @@ def show_testing_interface():
     current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
     left_label = "\noder\n".join([CATEGORIES[cat] for cat in block_config['left']])
     right_label = "\noder\n".join([CATEGORIES[cat] for cat in block_config['right']])
-    
     feedback_class = "incorrect" if st.session_state.show_feedback else ""
     stimulus_key = f"stimulus-{st.session_state.current_block}-{st.session_state.current_trial}"
-    
     st.markdown(f'<div class="stimulus-container {feedback_class}" key="{stimulus_key}"><div class="stimulus-text">{current_stimulus["text"]}</div></div>', unsafe_allow_html=True)
-
-    if st.session_state.show_feedback:
-        st.markdown('<p class="feedback-x">X</p>', unsafe_allow_html=True)
-    else:
-        st.markdown('<p class="feedback-x"></p>', unsafe_allow_html=True)
-
+    if st.session_state.show_feedback: st.markdown('<p class="feedback-x">X</p>', unsafe_allow_html=True)
+    else: st.markdown('<p class="feedback-x"></p>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
-    with col1:
-        st.button(left_label, on_click=record_response, args=('e',), use_container_width=True, key=f'btn_e_{st.session_state.current_trial}', type="secondary")
-    with col2:
-        st.button(right_label, on_click=record_response, args=('i',), use_container_width=True, key=f'btn_i_{st.session_state.current_trial}', type="secondary")
-
+    with col1: st.button(left_label, on_click=record_response, args=('e',), use_container_width=True, key=f'btn_e_{st.session_state.current_trial}', type="secondary")
+    with col2: st.button(right_label, on_click=record_response, args=('i',), use_container_width=True, key=f'btn_i_{st.session_state.current_trial}', type="secondary")
     if st.session_state.start_time == 0:
         st.session_state.start_time = time.time()
         time.sleep(0.01)
 
-def display_iat_effect_visualization(iat_effect):
+def get_iat_effect_visualization_html(iat_effect):
     max_effect_for_scale = 500 
     normalized_effect = max(min(iat_effect, max_effect_for_scale), -max_effect_for_scale)
     bar_width = abs(normalized_effect / max_effect_for_scale) * 50
     bar_class = "positive" if iat_effect >= 0 else "negative"
-    
-    st.markdown(f"""
+    return f"""
         <div style="font-size: 0.9rem; display: flex; justify-content: space-between; color: #555;">
             <span>Starke Assoziation mit <b>Nutzlos</b></span>
             <span>Starke Assoziation mit <b>Nützlich</b></span>
@@ -257,67 +223,67 @@ def display_iat_effect_visualization(iat_effect):
         <div class="iat-result-bar-container">
             <div class="iat-result-center-line"></div>
             <div class="iat-result-bar {bar_class}" style="width: {bar_width}%;"></div>
-        </div>
-    """, unsafe_allow_html=True)
+        </div>"""
 
 def calculate_and_show_results():
     st.title("📊 Ihr IAT-Ergebnis")
-    
     df = pd.DataFrame(st.session_state.results)
     critical_trials = df[df['is_critical'] & df['correct']]
-    
     try:
         avg_rt_block4 = critical_trials[critical_trials['block'] == 4]['rt'].mean()
         avg_rt_block7 = critical_trials[critical_trials['block'] == 7]['rt'].mean()
-
-        if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7):
-            raise ValueError("Nicht genügend Daten in einem der kritischen Blöcke.")
-        
+        if pd.isna(avg_rt_block4) or pd.isna(avg_rt_block7): raise ValueError("Nicht genügend Daten.")
         iat_effect = avg_rt_block7 - avg_rt_block4
 
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("Ihre implizite Neigung auf einen Blick")
-
+        # KORREKTUR: Erste Karte als kompletter HTML-Block
+        interpretation_html = ""
         if iat_effect > 50:
-            st.success(f"**Positive Tendenz:** Sie assoziieren 'PowerPoint-Anwendung' implizit eher mit **'Nützlich'**.")
+            interpretation_html = "<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px;'><b>Positive Tendenz:</b> Sie assoziieren 'PowerPoint-Anwendung' implizit eher mit <b>'Nützlich'</b>.</div>"
         elif iat_effect < -50:
-            st.warning(f"**Negative Tendenz:** Sie assoziieren 'PowerPoint-Anwendung' implizit eher mit **'Nutzlos'**.")
+            interpretation_html = "<div style='background-color: #fff3cd; color: #856404; padding: 1rem; border-radius: 8px;'><b>Negative Tendenz:</b> Sie assoziieren 'PowerPoint-Anwendung' implizit eher mit <b>'Nutzlos'</b>.</div>"
         else:
-            st.info("**Neutrale Tendenz:** Ihre impliziten Assoziationen sind weitgehend ausgeglichen.")
+            interpretation_html = "<div style='background-color: #d1ecf1; color: #0c5460; padding: 1rem; border-radius: 8px;'><b>Neutrale Tendenz:</b> Ihre impliziten Assoziationen sind weitgehend ausgeglichen.</div>"
         
-        display_iat_effect_visualization(iat_effect)
-        st.markdown("</div>", unsafe_allow_html=True)
+        viz_html = get_iat_effect_visualization_html(iat_effect)
+        
+        st.markdown(f"""<div class="card">
+            <h4>Ihre implizite Neigung auf einen Blick</h4>
+            {interpretation_html}
+            {viz_html}
+        </div>""", unsafe_allow_html=True)
 
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("⏱️ Detailauswertung")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric(label="Ø Zeit (PP + Nützlich)", value=f"{avg_rt_block4:.0f} ms")
-        with col2:
-            st.metric(label="Ø Zeit (PP + Nutzlos)", value=f"{avg_rt_block7:.0f} ms")
-        with col3:
-            st.metric(label="IAT-Effekt (Differenz)", value=f"{iat_effect:.0f} ms", delta=f"{iat_effect:.0f} ms", delta_color="inverse")
+        # KORREKTUR: Zweite Karte als kompletter HTML-Block
+        st.markdown(f"""<div class="card">
+            <h4>⏱️ Detailauswertung</h4>
+            <div class="metrics-container">
+                <div class="metric-col">
+                    <div class="metric-label">Ø Zeit (PP + Nützlich)</div>
+                    <div class="metric-value">{avg_rt_block4:.0f} ms</div>
+                </div>
+                <div class="metric-col">
+                    <div class="metric-label">Ø Zeit (PP + Nutzlos)</div>
+                    <div class="metric-value">{avg_rt_block7:.0f} ms</div>
+                </div>
+                <div class="metric-col">
+                    <div class="metric-label">IAT-Effekt (Differenz)</div>
+                    <div class="metric-value">{iat_effect:.0f} ms</div>
+                </div>
+            </div>
+            <hr>
+            <p><b>Wie kommt das Ergebnis zustande?</b><br>
+            Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block "PP + Nutzlos" langsamer waren. Ihr Gehirn brauchte mehr Zeit, um diese "unpassende" Kombination zu verarbeiten. Ein <b>negativer Effekt</b> würde das Gegenteil bedeuten.</p>
+            <p style="margin-top: 1rem;"><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung.</p>
+        </div>""", unsafe_allow_html=True)
         
-        st.markdown("""
-        <p><b>Wie kommt das Ergebnis zustande?</b><br>
-        Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block "PP + Nutzlos" langsamer waren. Ihr Gehirn brauchte mehr Zeit, um diese "unpassende" Kombination zu verarbeiten. Ein <b>negativer Effekt</b> würde das Gegenteil bedeuten.</p>
-        <p><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung.</p>
-        """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-        with st.expander("Rohdaten der Messung anzeigen"):
-            st.dataframe(df)
+        # ENTFERNT: Der Expander für Rohdaten wurde entfernt.
 
     except (KeyError, ZeroDivisionError, ValueError) as e:
         st.error(f"Es konnten keine ausreichenden Daten gesammelt werden. Bitte versuchen Sie es erneut. Fehler: {e}")
-        st.dataframe(df)
     
     st.write("")
     if st.button("Test erneut durchführen", use_container_width=True):
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
+        for key in list(st.session_state.keys()): del st.session_state[key]
         st.rerun()
-        
     show_footer()
 
 # --- 5. Hauptlogik der Streamlit App ---
@@ -326,11 +292,7 @@ st.set_page_config(layout="centered", page_title="IAT PowerPoint")
 load_css()
 initialize_state()
 
-if st.session_state.test_phase == 'start':
-    show_start_page()
-elif st.session_state.test_phase == 'break':
-    show_break_screen()
-elif st.session_state.test_phase == 'testing':
-    show_testing_interface()
-elif st.session_state.test_phase == 'end':
-    calculate_and_show_results()
+if st.session_state.test_phase == 'start': show_start_page()
+elif st.session_state.test_phase == 'break': show_break_screen()
+elif st.session_state.test_phase == 'testing': show_testing_interface()
+elif st.session_state.test_phase == 'end': calculate_and_show_results()
