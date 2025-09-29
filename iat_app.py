@@ -53,7 +53,6 @@ def prepare_block(block_index):
     st.session_state.current_trial = 0
 
 def record_response(key_pressed):
-    # Ignoriere Klicks, wenn die Zeitmessung nicht läuft (Sicherheitsabfrage)
     if st.session_state.start_time == 0:
         return
 
@@ -63,15 +62,13 @@ def record_response(key_pressed):
     
     is_correct = (key_pressed == 'e' and current_stimulus['category'] in block_config['left']) or \
                  (key_pressed == 'i' and current_stimulus['category'] in block_config['right'])
-        
-    # Speichere nur die erste Antwort für jeden Versuch
+    
     if not st.session_state.show_feedback:
         st.session_state.results.append({
             'block': st.session_state.current_block + 1, 'is_critical': block_config.get('is_critical', False),
             'stimulus': current_stimulus['text'], 'correct': is_correct, 'rt': reaction_time
         })
     
-    # Stoppuhr nach JEDEM Klick zurücksetzen
     st.session_state.start_time = 0
     
     if is_correct:
@@ -86,8 +83,6 @@ def record_response(key_pressed):
                 st.session_state.test_phase = 'break'
     else:
         st.session_state.show_feedback = True
-    
-    st.rerun()
 
 def calculate_and_show_results():
     st.title("Testergebnis")
@@ -117,11 +112,17 @@ if st.session_state.test_phase == 'start':
     st.markdown("Ihre Aufgabe: Ordnen Sie die Begriffe, die in der Mitte erscheinen, so schnell wie möglich zu, indem Sie auf den entsprechenden Button klicken ('E' für links, 'I' für rechts).")
     if st.button("Test starten", use_container_width=True):
         st.session_state.test_phase = 'break'
+        # Bereite hier schon den ersten Block vor
         prepare_block(0)
         st.rerun()
 
 elif st.session_state.test_phase == 'break':
     st.header(f"Block {st.session_state.current_block + 1} von {len(IAT_BLOCKS)} beginnt...")
+    
+    # === DIE ENTSCHEIDENDE KORREKTUR ===
+    # Hier wird der nächste Block vorbereitet und der Trial-Zähler zurückgesetzt.
+    prepare_block(st.session_state.current_block)
+
     time.sleep(2)
     st.session_state.test_phase = 'testing'
     st.rerun()
@@ -148,9 +149,6 @@ elif st.session_state.test_phase == 'testing':
     with col_btn2:
         st.button("I", on_click=record_response, args=('i',), use_container_width=True, key=f'button_i_{st.session_state.current_trial}')
             
-    # === DIE ENTSCHEIDENDE KORREKTUR DER TIMER-LOGIK ===
-    # Die Stoppuhr wird jetzt IMMER gestartet, wenn der Bildschirm angezeigt wird
-    # und sie nicht bereits durch einen vorherigen Klick gestoppt wurde.
     if st.session_state.start_time == 0:
         st.session_state.start_time = time.time()
 
