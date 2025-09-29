@@ -2,10 +2,9 @@ import streamlit as st
 import random
 import time
 import pandas as pd
-from streamlit-shortcuts import add_keyboard_shortcuts # Die neue, bessere Komponente
+from streamlit_shortcuts import st_shortcuts # KORRIGIERTER IMPORT
 
 # --- 1. Konfiguration des Tests: Kategorien und Stimuli aus dem Paper ---
-# (Dieser Teil bleibt unverändert)
 STIMULI = {
     'canonical': ['Trainings durchführen', 'Vorträge erstellen', 'Folien bearbeiten', 'Wissen teilen', 'Präsentation', 'Grafiken präsentieren', 'Verkaufspräsentation', 'Folien erstellen'],
     'non_affordance': ['Datenverschlüsselung', 'Spiele herunterladen', 'Instant Messaging', 'Im Internet surfen', 'Dateien wiederherstellen', 'Musik streamen', 'Online bezahlen', 'Virenscan'],
@@ -20,7 +19,6 @@ CATEGORIES = {
 }
 
 # --- 2. Definition der 7 Testblöcke ---
-# (Dieser Teil bleibt unverändert)
 IAT_BLOCKS = [
     {'left': ['canonical'], 'right': ['non_affordance'], 'stimuli': ['canonical', 'non_affordance'], 'trials': 20, 'is_practice': True},
     {'left': ['useful'], 'right': ['useless'], 'stimuli': ['useful', 'useless'], 'trials': 20, 'is_practice': True},
@@ -32,7 +30,6 @@ IAT_BLOCKS = [
 ]
 
 # --- 3. Funktionen zur Steuerung des Tests ---
-# (Die Kernlogik bleibt ebenfalls unverändert)
 def initialize_state():
     if 'test_phase' not in st.session_state:
         st.session_state.test_phase = 'start'
@@ -129,13 +126,8 @@ elif st.session_state.test_phase == 'testing':
     left_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['left']])
     right_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['right']])
 
-    # === NEUE LOGIK MIT streamlit-shortcuts ===
-    # 1. Definiere die Shortcuts. Wir mappen die Tasten 'e' und 'i' auf die eindeutigen
-    #    Keys der Buttons, die wir gleich erstellen werden.
-    add_keyboard_shortcuts({
-        'e': 'button_e',
-        'i': 'button_i',
-    })
+    # === KORRIGIERTER AUFRUF ===
+    st_shortcuts(['e', 'i'], key='key_handler')
 
     # Layout für die Kategorien
     col1, col2 = st.columns(2)
@@ -148,22 +140,27 @@ elif st.session_state.test_phase == 'testing':
     if st.session_state.show_feedback:
         st.markdown('<p style="color:red; font-size: 40px; text-align: center;">X</p>', unsafe_allow_html=True)
 
-    # 2. Erstelle die Buttons. Ihre on_click-Funktion wird entweder durch einen
-    #    Mausklick ODER durch den Tastatur-Shortcut ausgelöst.
+    # Die Buttons sind jetzt nicht mehr direkt mit den Tasten verknüpft,
+    # aber die on_click Logik bleibt für Mausklicks erhalten.
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        st.button("E", on_click=record_response, args=('e',), use_container_width=True, key='button_e')
+        st.button("E", on_click=record_response, args=('e',), use_container_width=True)
     with col_btn2:
-        st.button("I", on_click=record_response, args=('i',), use_container_width=True, key='button_i')
+        st.button("I", on_click=record_response, args=('i',), use_container_width=True)
+    
+    # Logik, um auf den Tastendruck von st_shortcuts zu reagieren
+    if 'key_handler' in st.session_state and st.session_state.key_handler:
+        key_pressed = st.session_state.key_handler
+        del st.session_state.key_handler # Reset nach Verarbeitung
+        record_response(key_pressed)
+        st.rerun()
 
-    # Startet die Zeitmessung, nachdem alles gerendert wurde
     if st.session_state.start_time == 0 and not st.session_state.show_feedback:
         st.session_state.start_time = time.time()
 
 elif st.session_state.test_phase == 'end':
     calculate_and_show_results()
     if st.button("Test neu starten", use_container_width=True):
-        # Setzt den Zustand komplett zurück
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.rerun()
