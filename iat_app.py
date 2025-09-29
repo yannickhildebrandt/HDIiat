@@ -69,20 +69,22 @@ def record_response(key_pressed):
     
     st.session_state.start_time = 0
     
-    # === KORRIGIERTE UND VEREINFACHTE LOGIK ===
-    # Setze das Feedback-Flag basierend auf der Korrektheit
-    st.session_state.show_feedback = not is_correct
-    
-    # Gehe IMMER zum nächsten Versuch, egal ob die Antwort richtig oder falsch war.
-    st.session_state.current_trial += 1
-    
-    # Prüfe, ob der Block zu Ende ist und gehe ggf. zum nächsten Block oder zum Ende über.
-    if st.session_state.current_trial >= len(st.session_state.stimuli_list):
-        st.session_state.current_block += 1
-        if st.session_state.current_block >= len(IAT_BLOCKS):
-            st.session_state.test_phase = 'end'
-        else:
-            st.session_state.test_phase = 'break'
+    # === KORRIGIERTE LOGIK FÜR FEHLERBEHANDLUNG ===
+    if is_correct:
+        # Antwort war richtig: Feedback ausblenden und zum nächsten Versuch übergehen.
+        st.session_state.show_feedback = False
+        st.session_state.current_trial += 1
+        
+        # Prüfen, ob der Block oder der gesamte Test beendet ist.
+        if st.session_state.current_trial >= len(st.session_state.stimuli_list):
+            st.session_state.current_block += 1
+            if st.session_state.current_block >= len(IAT_BLOCKS):
+                st.session_state.test_phase = 'end'
+            else:
+                st.session_state.test_phase = 'break'
+    else:
+        # Antwort war falsch: Feedback anzeigen, aber beim AKTUELLEN Versuch bleiben.
+        st.session_state.show_feedback = True
 
 def calculate_and_show_results():
     st.title("Testergebnis")
