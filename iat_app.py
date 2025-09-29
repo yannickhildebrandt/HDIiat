@@ -100,4 +100,63 @@ def calculate_and_show_results():
         iat_effect = avg_rt_block7 - avg_rt_block4
 
         st.metric(label="Ø Reaktionszeit Block 4 (kongruent)", value=f"{avg_rt_block4:.0f} ms")
-        st.metric(
+        st.metric(label="Ø Reaktionszeit Block 7 (inkongruent)", value=f"{avg_rt_block7:.0f} ms")
+        st.metric(label="IAT-Effekt (Differenz)", value=f"{iat_effect:.0f} ms")
+        st.info("Ein positiver IAT-Effekt deutet auf eine implizite Assoziation zwischen 'PowerPoint-Anwendung' und 'Nützlich' hin.")
+        with st.expander("Rohdaten anzeigen"): st.dataframe(df)
+    except (KeyError, ZeroDivisionError, ValueError):
+        st.error("Es konnten keine ausreichenden Daten gesammelt werden, um ein Ergebnis zu berechnen.")
+
+# --- 4. Streamlit App Layout und Logik ---
+
+st.set_page_config(layout="centered")
+initialize_state()
+
+if st.session_state.test_phase == 'start':
+    st.title("IAT-Demonstration: PowerPoint-Wahrnehmung")
+    st.markdown("Ihre Aufgabe: Ordnen Sie die Begriffe, die in der Mitte erscheinen, so schnell wie möglich zu, indem Sie auf den entsprechenden Button klicken ('E' für links, 'I' für rechts).")
+    if st.button("Test starten", use_container_width=True):
+        st.session_state.test_phase = 'break'
+        prepare_block(0)
+        st.rerun()
+
+elif st.session_state.test_phase == 'break':
+    st.header(f"Block {st.session_state.current_block + 1} von {len(IAT_BLOCKS)} beginnt...")
+    time.sleep(2)
+    st.session_state.test_phase = 'testing'
+    st.rerun()
+
+elif st.session_state.test_phase == 'testing':
+    block_config = IAT_BLOCKS[st.session_state.current_block]
+    current_stimulus = st.session_state.stimuli_list[st.session_state.current_trial]
+    
+    left_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['left']])
+    right_cat_text = "<br>/<br>".join([CATEGORIES[cat] for cat in block_config['right']])
+
+    col1, col2 = st.columns(2)
+    with col1: st.markdown(f'<p style="color:green; font-size: 20px;">{left_cat_text}</p>', unsafe_allow_html=True)
+    with col2: st.markdown(f'<p style="color:blue; font-size: 20px; text-align: right;">{right_cat_text}</p>', unsafe_allow_html=True)
+    
+    st.markdown(f'<div style="text-align: center; font-size: 32px; font-weight: bold; padding: 50px 0;">{current_stimulus["text"]}</div>', unsafe_allow_html=True)
+    
+    if st.session_state.show_feedback:
+        st.markdown('<p style="color:red; font-size: 40px; text-align: center;">X</p>', unsafe_allow_html=True)
+
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
+        st.button("E", on_click=record_response, args=('e',), use_container_width=True, key=f'button_e_{st.session_state.current_trial}')
+    with col_btn2:
+        st.button("I", on_click=record_response, args=('i',), use_container_width=True, key=f'button_i_{st.session_state.current_trial}')
+            
+    # === DIE ENTSCHEIDENDE KORREKTUR DER TIMER-LOGIK ===
+    # Die Stoppuhr wird jetzt IMMER gestartet, wenn der Bildschirm angezeigt wird
+    # und sie nicht bereits durch einen vorherigen Klick gestoppt wurde.
+    if st.session_state.start_time == 0:
+        st.session_state.start_time = time.time()
+
+elif st.session_state.test_phase == 'end':
+    calculate_and_show_results()
+    if st.button("Test neu starten", use_container_width=True):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
