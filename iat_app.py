@@ -151,7 +151,6 @@ def load_css():
     """, unsafe_allow_html=True)
 
 def show_footer():
-    """Zeigt den Footer mit Attribution an."""
     st.write("")
     st.markdown("---")
     st.markdown(
@@ -166,16 +165,12 @@ def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
     st.markdown("<h2 style='text-align:center; color: #555;'>Ihre unbewusste Einstellung zu PowerPoint</h2>", unsafe_allow_html=True)
     st.info("**Willkommen!** Dieser interaktive Test ist Teil des HDI-Workshops zum Thema **'Digitales Mindset'**.", icon="💡")
-
-    # KORREKTUR: Der gesamte Inhalt der Karte ist jetzt in einem einzigen Markdown-Befehl.
     st.markdown("""
     <div class="card">
         <h4>🧠 Was ist ein Impliziter Assoziationstest?</h4>
         <p>Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.</p>
     </div>
     """, unsafe_allow_html=True)
-
-    # KORREKTUR: Auch hier ist der gesamte Inhalt in einem einzigen Markdown-Befehl.
     st.markdown("""
     <div class="card">
         <h4>🎯 Ihre Aufgabe</h4>
@@ -187,26 +182,37 @@ def show_start_page():
         <p><b>Ziel ist Geschwindigkeit!</b> Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.</p>
     </div>
     """, unsafe_allow_html=True)
-    
     st.write("")
     if st.button("Ich bin bereit, den Test zu starten!", use_container_width=True):
         st.session_state.test_phase = 'break'
         prepare_block(0)
         st.rerun()
-        
     show_footer()
 
 def show_break_screen():
+    """Zeigt den Übergangsbildschirm mit einem visuellen Countdown an."""
     block_config = IAT_BLOCKS[st.session_state.current_block]
     progress_percent = (st.session_state.current_block) / len(IAT_BLOCKS)
     
     st.header(f"Block {st.session_state.current_block + 1} von {len(IAT_BLOCKS)}")
     st.subheader(f"Thema: {block_config['name']}")
     st.progress(progress_percent, text=f"{int(progress_percent*100)}% abgeschlossen")
+    st.write("") # Abstand
+
+    # Platzhalter für den Countdown
+    countdown_placeholder = st.empty()
     
-    with st.spinner("Nächste Runde wird vorbereitet..."):
-        time.sleep(3)
+    # Dauer des Countdowns in Sekunden
+    BREAK_DURATION = 10
+
+    for i in range(BREAK_DURATION, 0, -1):
+        countdown_placeholder.markdown(f"<h1 style='text-align: center; font-size: 5rem; color: {HDI_GREEN};'>{i}</h1>", unsafe_allow_html=True)
+        time.sleep(1)
     
+    countdown_placeholder.markdown(f"<h1 style='text-align: center; color: {HDI_GREEN};'>Los geht's!</h1>", unsafe_allow_html=True)
+    time.sleep(1)
+
+    # Übergang zur nächsten Testphase
     st.session_state.test_phase = 'testing'
     prepare_block(st.session_state.current_block)
     st.rerun()
