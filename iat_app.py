@@ -97,6 +97,10 @@ def load_css():
         .stApp {{ background-color: {HDI_LIGHT_GRAY}; }}
         .stApp, .stMarkdown, h1, h2, h3, h4, h5, h6 {{ color: {HDI_DARK_GRAY}; }}
         h1, h2, h3 {{ animation: fadeIn 0.5s ease-in, slideInUp 0.5s ease-out; }}
+        
+        /* KORREKTUR: Zentriert die Hauptüberschriften */
+        h1, h2 {{ text-align: center; }}
+
         .card {{ background-color: white; padding: 2rem; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); margin-top: 1.5rem; animation: fadeIn 0.5s ease-in-out; }}
         .card p {{ margin-bottom: 0; }}
         .stButton>button {{ background-image: linear-gradient(to right, {HDI_GREEN} 0%, #009a6e 51%, {HDI_GREEN} 100%); color: white; border-radius: 10px; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border: none; transition: 0.5s; background-size: 200% auto; box-shadow: 0 4px 10px rgba(0, 122, 82, 0.3); }}
@@ -138,7 +142,8 @@ def jump_to_end_for_debug():
 
 def show_start_page():
     st.title("Impliziter Assoziationstest (IAT)")
-    st.markdown("<h2 style='text-align:center; color: #555; margin-bottom: 2rem;'>Digitale Kognition: Daten als Rohstoff vs. Beleg</h2>", unsafe_allow_html=True)
+    # KORREKTUR: Inline-Style entfernt, da dies nun global per CSS geregelt wird
+    st.markdown("<h2 style='color: #555; margin-bottom: 2rem;'>Digitale Kognition: Daten als Rohstoff vs. Beleg</h2>", unsafe_allow_html=True)
     st.info("**Willkommen!** Finden Sie Ihre unbewusste Grundhaltung gegenüber Daten heraus.", icon="💡")
     
     st.markdown("""<div class="card">
@@ -254,7 +259,6 @@ def calculate_and_show_results():
             {viz_html}
         </div>""", unsafe_allow_html=True)
         
-        # KORRIGIERT: Der fehlerhafte Kommentar wurde aus dem f-string entfernt
         st.markdown(f"""<div class="card">
             <h4>⏱️ Detailauswertung</h4>
             <div class="metrics-container">
