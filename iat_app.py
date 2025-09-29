@@ -120,10 +120,18 @@ def show_start_page():
 
     with st.container(border=True):
         st.markdown("#### 🧠 Was ist ein Impliziter Assoziationstest?")
-        st.markdown("Der IAT misst die Stärke unbewusster Assoziationen...") # Gekürzt zur Lesbarkeit
+        st.markdown("""
+        Der IAT misst die Stärke unbewusster Assoziationen. Die Logik: Wir reagieren schneller, wenn zwei Konzepte, die in unserem Gehirn stark verknüpft sind, auf derselben Antworttaste liegen. Dieser Test misst Ihre Reaktionszeit in Millisekunden, um diese verborgenen Verknüpfungen aufzudecken.
+        """)
     with st.container(border=True):
         st.markdown("#### 🎯 Ihre Aufgabe")
-        st.markdown("1. **Kategorien beachten:** ...") # Gekürzt zur Lesbarkeit
+        st.markdown("""
+        1.  **Kategorien beachten:** Links und rechts werden Kategorien angezeigt.
+        2.  **Begriff in der Mitte:** Ein Wort erscheint in der Mitte.
+        3.  **Schnell zuordnen:** Klicken Sie so schnell und genau wie möglich auf den Button der passenden Seite. Bei Fehlern erscheint ein rotes **X** – korrigieren Sie sich, um weiterzumachen.
+        
+        **Ziel ist Geschwindigkeit!** Zögern Sie nicht und folgen Sie Ihrem ersten Impuls.
+        """)
     st.write("")
     if st.button("Ich bin bereit, den Test zu starten!", use_container_width=True):
         st.session_state.test_phase = 'break'
@@ -158,10 +166,15 @@ def show_testing_interface():
     right_label = "\noder\n".join([CATEGORIES[cat] for cat in block_config['right']])
 
     st.markdown(f'<div class="stimulus-text">{current_stimulus["text"]}</div>', unsafe_allow_html=True)
+    
+    # BUGFIX: Hier sind die Korrekturen für die Fehleranzeige
     if st.session_state.show_feedback:
-        st.markdown('<p class="feedback-x">X</p>', unsafe_allow_html=True)
+        # Ein div mit voller Breite stellt sicher, dass text-align: center korrekt funktioniert.
+        st.markdown('<div style="width: 100%; text-align: center;"><p class="feedback-x">X</p></div>', unsafe_allow_html=True)
     else:
-        st.markdown('<p style="color:white; font-size: 4rem;">X</p>', unsafe_allow_html=True)
+        # Ein unsichtbarer div mit fester Höhe, um das Layout stabil zu halten.
+        # Die Höhe (ca. 75px) entspricht der ungefähren Höhe des 4rem großen "X".
+        st.markdown('<div style="height: 75px;"></div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     with col1: st.button(left_label, on_click=record_response, args=('e',), use_container_width=True, key=f'btn_e_{st.session_state.current_trial}', type="secondary")
@@ -193,7 +206,11 @@ def calculate_and_show_results():
             with col2: st.metric(label="Ø Zeit (PP + Nutzlos)", value=f"{avg_rt_block7:.0f} ms")
             with col3: st.metric(label="IAT-Effekt (Differenz)", value=f"{iat_effect:.0f} ms")
             st.markdown("---")
-            st.markdown("""<p><b>Wie kommt das Ergebnis zustande?</b>...</p><p><b>Wichtiger Hinweis:</b>...</p>""", unsafe_allow_html=True)
+            st.markdown("""
+                <p><b>Wie kommt das Ergebnis zustande?</b><br>
+                Ein <b>positiver IAT-Effekt</b> bedeutet, dass Sie im Block "PP + Nutzlos" langsamer waren. Ihr Gehirn brauchte mehr Zeit, um diese "unpassende" Kombination zu verarbeiten. Ein <b>negativer Effekt</b> würde das Gegenteil bedeuten.</p>
+                <p><b>Wichtiger Hinweis:</b> Dies ist eine Momentaufnahme Ihrer automatischen Assoziationen, nicht zwingend Ihre bewusste Meinung.</p>
+            """, unsafe_allow_html=True)
             
     except (KeyError, ZeroDivisionError, ValueError) as e:
         st.error(f"Es konnten keine ausreichenden Daten gesammelt werden. Bitte versuchen Sie es erneut. Fehler: {e}")
