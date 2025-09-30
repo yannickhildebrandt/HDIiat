@@ -146,7 +146,7 @@ def show_start_page():
     
     st.markdown("""<div class="card">
         <h4>🧠 Worum geht es hier?</h4>
-        <p>Dieser Test misst, ob die Interaktion mit KI implizit als kreativer Dialog (Sparring) oder als transaktionale Anweisung (Auftrag) wahrgenommen wird. Der "Aha-Moment" entsteht, wenn Sie erkennen, dass nicht die KI allein, sondern Ihre eigene, unbewusste Interaktionsweise die Qualität des Ergebnisses bestimmt: Ist die KI ein Werkzeug, dem man Aufträge erteilt, oder ein Partner, den man im Dialog zu besseren Ideen herausfordert?</p>
+        <p>Dieser Test misst, ob die Interaktion mit KI implizit als kreativer Dialog (Sparring) oder als transaktionale Anweisung (Auftrag) wahrgenommen wird. Ist die KI ein Werkzeug, dem man Aufträge erteilt, oder ein Partner, den man im Dialog zu besseren Ideen herausfordert?</p>
     </div>""", unsafe_allow_html=True)
     
     st.markdown("""<div class="card">
