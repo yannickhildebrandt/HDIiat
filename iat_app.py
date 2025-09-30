@@ -148,7 +148,7 @@ def show_start_page():
     
     st.markdown("""<div class="card">
         <h4>🧠 Worum geht es hier?</h4>
-        <p>Dieser Test misst die unbewusste Grundhaltung gegenüber Daten. Im Versicherungsalltag sind Daten oft mit Dokumentationspflicht und Nachweisbarkeit verbunden ("Ist das revisionssicher?"). Ein digitales Mindset sieht in denselben Daten jedoch den Treibstoff für KI-Modelle, die zukünftige Risiken prognostizieren und neue Produkte ermöglichen. Der "Aha-Moment" entsteht, wenn Sie erkennen, ob Sie Daten implizit als administrative Last (Vergangenheit) oder als strategischen Rohstoff (Zukunft) wahrnehmen.</p>
+        <p>Dieser Test misst die unbewusste Grundhaltung gegenüber Daten. Daten sind oft mit Dokumentationspflicht und Nachweisbarkeit verbunden ("Ist das revisionssicher?"). Ein digitales Mindset sieht in solchen Daten jedoch auch den Treibstoff für KI-Modelle. Dieser Test misst, ob Sie Daten implizit als administrative Last (Vergangenheit) oder als strategischen Rohstoff (Zukunft) wahrnehmen.</p>
     </div>""", unsafe_allow_html=True)
     
     st.markdown("""<div class="card">
