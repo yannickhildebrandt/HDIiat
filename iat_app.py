@@ -147,7 +147,7 @@ def show_start_page():
     
     st.markdown("""<div class="card">
         <h4>🧠 Worum geht es hier?</h4>
-        <p>In traditionellen Projekten dominiert oft das Ziel, einen perfekten Plan fehlerfrei umzusetzen. Ein agiles Mindset hingegen begreift Projekte als Experimente, bei denen durch Ausprobieren und Feedback gelernt wird. Dieser Test misst, ob Ihre unbewusste Reaktion auf Projekte eher von der Angst vor Planabweichung (Kontrolle) oder der Freude am Lernen (Entdeckung) geprägt ist.</p>
+        <p>In traditionellen Projekten dominiert oft das Ziel, einen perfekten Plan fehlerfrei umzusetzen. Durch eine agile Kognition hingegen begreift man Projekte als Experimente, bei denen durch Ausprobieren und Feedback gelernt wird. Dieser Test misst, ob Ihre unbewusste Reaktion auf Projekte eher von der Angst vor Planabweichung (Kontrolle) oder der Freude am Lernen (Entdeckung) geprägt ist.</p>
     </div>""", unsafe_allow_html=True)
     
     st.markdown("""<div class="card">
